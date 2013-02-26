@@ -1,0 +1,104 @@
+\ProvidesPackage{beamerthemeUniud}[2011/09/20]
+
+\definecolor{Orange}{RGB}{249,142,42}
+\definecolor{Brown}{RGB}{65,46,44}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Outer theme
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\useoutertheme[width=.15\paperwidth]{sidebar}
+\setlength{\beamer@headheight}{.125\paperheight}
+\pgfdeclareimage[width=.14\paperwidth]{small-logo}{template/uniud_long}
+\pgfdeclareimage[width=.33\paperwidth]{main-logo}{template/uniud}
+\pgfdeclareimage[width=.13\paperwidth]{cut-logo}{template/uniud}
+\pgfdeclareimage[width=.33\paperwidth]{large-corner}{template/large-corner}
+\pgfdeclareimage[height=\beamer@headheight]{small-corner}{template/small-corner}
+\setbeamertemplate{sidebar left}{%
+\vskip7pt
+\insertverticalnavigation{\beamer@sidebarwidth}%
+}
+
+\setbeamertemplate{footline}[text line]{%
+\strut\hfill{\bfseries {\em \insertshorttitle: \insertshortsubtitle}\hfill\hspace{2em}\insertframenumber/\inserttotalframenumber}}
+
+\addtobeamertemplate{frametitle}{}{%
+\begin{pgfpicture}
+\pgf@relevantforpicturesizefalse
+\pgftransformxshift{-\Gm@lmargin}
+\pgftransformyshift{\beamer@headheight+18pt}
+\pgftext[at=\pgfpoint{\paperwidth}{-\beamer@headheight},right,base]{\pgfuseimage{small-corner}}
+\pgfpathmoveto{\pgfpoint{.15\paperwidth}{0pt}}
+\pgfpathlineto{\pgfpoint{.15\paperwidth}{-\beamer@headheight}}
+\pgfsetlinewidth{3.5pt}
+\pgfsetinnerlinewidth{1pt}
+\pgfsetinnerstrokecolor{Orange}
+\pgfsetcolor{white}
+\pgfusepath{stroke}
+\pgfpathmoveto{\pgfpoint{.15\paperwidth}{-.17\paperheight}}
+\pgfpathlineto{\pgfpoint{.15\paperwidth}{-.97\paperheight}}
+\pgfsetlinewidth{1pt}
+\pgfsetinnerlinewidth{0pt}
+\pgfsetcolor{Orange}
+\pgfusepath{stroke}
+\pgftext[at=\pgfpoint{.075\paperwidth}{-.97\paperheight},center,base]{\pgfuseimage{small-logo}}
+\end{pgfpicture}%
+\vskip-25pt%
+}
+
+\addtobeamertemplate{title page}{%
+\usebeamertemplate{title background}%
+\vskip .2\paperheight%
+}
+{}
+
+\newcommand\DoBackground{%
+\pgfpathmoveto{\pgfpointorigin}
+\pgfpathrectanglecorners{\pgfpoint{0pt}{0pt}}{\pgfpoint{\paperwidth}{-\paperheight}}
+\pgfsetfillcolor{Brown}
+\pgfusepath{fill}
+\pgfpathmoveto{\pgfpointorigin}
+\pgfpathrectanglecorners{\pgfpoint{0pt}{0pt}}{\pgfpoint{\paperwidth}{-0.12\paperheight}}
+\pgfsetfillcolor{Orange}
+\pgfusepath{fill}
+}
+
+\setbeamertemplate{title background}{%
+\begin{pgfpicture}
+\pgf@relevantforpicturesizefalse
+\pgftransformxshift{-\Gm@lmargin}
+\pgftransformyshift{5.5pt}
+\pgfusepath{fill}
+\DoBackground
+
+% Logo
+\pgftext[at=\pgfpoint{-.07\paperwidth}{-1.07\paperheight},left,base]{\pgfuseimage{main-logo}}
+
+\end{pgfpicture}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inner Theme
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\useinnertheme{rectangles}
+\setbeamertemplate{navigation symbols}{}
+
+\setlength{\leftmargini}{.5em}
+\setlength{\leftmarginii}{1.0em}
+\setlength{\leftmarginiii}{1.5em}
+\setlength{\leftmarginiv}{2.0em}
+\setlength{\leftmarginv}{2.5em}
+\setlength{\leftmarginvi}{3.0em}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Colours
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usecolortheme[named=Orange]{structure}
+\usecolortheme{rose}
+\setbeamercolor{title page}{fg=white}
+\setbeamercolor{logo}{bg=Orange}
+\setbeamercolor{frametitle}{fg=Orange,bg=Brown}
+\setbeamercolor{section in sidebar}{fg=Orange}
+\setbeamerfont{section in sidebar}{series=\bfseries}
+\setbeamercolor{block title}{bg=Brown!28!white,fg=Brown}
+\setbeamercolor{block body}{bg=Orange!15!white}
+
