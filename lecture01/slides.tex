@@ -1,47 +1,267 @@
 \section{Introduction}
+
 \begin{frame}
-\frametitle{A Frame}
-\framesubtitle{Bullet points}
+\frametitle{Electronic Systems Design}
+\begin{block}{The focus is on the {\bfseries system}}
+A system is a set of interacting {\em components} that form a whole
+\end{block}
+\pause
+\begin{exampleblock}{The design is {\bfseries simplified} by focusing on components}
+The team designing one component needs to have minimum knowledge of the remaining system
+\end{exampleblock}
+\pause
+\begin{alertblock}{To make components interact requires {\bfseries collaboration}}
+Teams need to exchange information and specification in an efficient/effective way
+\end{alertblock}
+\end{frame}
+
+\begin{frame}
+\frametitle{Objectives}
+\begin{enumerate}
+\item Become familiar with tools that facilitate team collaboration
+\item Acquire expertise in designing techniques for large projects
+\item Learn a programming language for the design of electronic systems
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{What's new in this course?}
+\begin{enumerate}
+\item A focus on interaction between teams
+\item Software engineering methodologies for effective design
+\item SystemC as the design language
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{What are we supposed to know already?}
+
+\begin{block}{C++ programming}
+This is necessary since SystemC is a C++ library. We will not be able to rehearse the basics of C++.
+\end{block}
+\begin{block}{VHDL programming}
+This is useful for SystemC programming, because the approach is very similar.
+\end{block}
+\begin{block}{UML}
+While we will briefly repeat the most useful diagrams, some previous experience helps.
+\end{block}
+\begin{block}{Use of a *nix OS}
+While the tools have been chosen specifically to be usable on a Windows machine too, the reference platform will be Linux.
+\end{block}
+
+\end{frame}
+
+\section{Topics}
+
+\subsection{Team Interaction}
+
+\begin{frame}
+\frametitle{Team interaction}
+\framesubtitle{Summary}
+\begin{enumerate}
+\item Use the Unified Modeling Language (UML) to document and exchange specifications
+\item Use an automated build system for reproducibility among teams
+\item Use a distributed version control system (DVCS) to be able to exchange code reliably
+\item Use an issue tracking system (ITS) to manage in-project and cross-project problems
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Team interaction}
+\framesubtitle{Tools - 1}
+\begin{block}{UML}
 \begin{itemize}
-\item First thing
-	\begin{itemize}
-	\item small point
-	\item fine print
-	\end{itemize}
-\item Second thing
-	\begin{enumerate}
-	\item point 1
-	\end{enumerate}
-\item Third thing
-	\begin{description}
-	\item[Research] the scientific pursuit for knowledge
-	\end{description}
+\item Violet: \url{http://alexdp.free.fr/violetumleditor/page.php} \,\,\, (cross-platform) (recommended)
+\item ArgoUML: \url{http://argouml.tigris.org} \,\,\, (cross-platform)
+\item LucidChart: \url{https://www.lucidchart.com} \,\,\, (web-based)
+\end{itemize}
+\end{block}
+
+\begin{block}{Build Automation}
+\begin{itemize}
+\item CMake: \url{http://cmake.org} \,\,\, (cross-platform)
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Team interaction}
+\framesubtitle{Tools - 2}
+
+\begin{block}{Version Control}
+\begin{itemize}
+\item Git: \url{http://git-scm.com} \,\,\, (cross-platform)
+\end{itemize}
+\end{block}
+
+\begin{block}{Issue Tracking}
+\begin{itemize}
+\item BitBucket: \url{https://bitbucket.org} \,\,\, (web-based)
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Team interaction}
+\framesubtitle{Book resources}
+\begin{itemize}
+\item R. Miles, K. Hamilton, "Learning UML 2.0", O'Reilly (2006)
+\item K. Martin, B. Hoffman, "Mastering CMake", Kitware Inc. (2010)
+\item J. Loeliger, M. McCullough, "Version Control with Git", O'Reilly (2012)
 \end{itemize}
 \end{frame}
 
-\subsection{Text}
 \begin{frame}
-\frametitle{Another Frame}
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+\frametitle{Team interaction}
+\framesubtitle{Online resources}
+\begin{enumerate}
+\item \url{http://edn.embarcadero.com/article/31863}
+\item \url{http://www.cmake.org/cmake/help/cmake_tutorial.html}
+\item \url{http://git-scm.com/book}
+\item \url{https://confluence.atlassian.com/display/BITBUCKET/Using+your+Bitbucket+Issue+Tracker}
+\end{enumerate}
 \end{frame}
 
-\subsection{Blocks}
+\subsection{Software engineering}
+
 \begin{frame}
-\frametitle{Blocks}
-\begin{definition}[Greetings]
-Hello World
-\end{definition}
+\frametitle{Software engineering}
+\framesubtitle{Summary}
 
-\begin{theorem}[Fermat's Last Theorem]
-$a^n + b^n = c^n, n \leq 2$
-\end{theorem}
+\begin{enumerate}
+\item Learn to write self-documenting code before relying on comments
+\item Adopt the {\em Test Driven Development} approach to coding
+\item Write code first, then {\em refactor} to clean up your mess
+\item (optional) Exploit an Integrated Development Environment (IDE) for refactoring and debugging
+\end{enumerate}
 
-\begin{alertblock}{Uh-oh.}
-By the pricking of my thumbs.
-\end{alertblock}
+\end{frame}
 
-\begin{exampleblock}{Uh-oh.}
-Something evil this way comes.
-\end{exampleblock}
+\begin{frame}
+\frametitle{Software engineering}
+\framesubtitle{Tools}
+\begin{block}{Integrated Development Environment}
+\begin{itemize}
+\item KDevelop: \url{http://www.kdevelop.org} \,\,\, (cross-platform) (recommended)
+\item Eclipse: \url{http://eclipse.org} \,\,\, (cross-platform)
+\item Visual Studio 2012: \url{http://www.microsoft.com/visualstudio/eng} \,\,\, (windows, commercial)
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Software engineering}
+\framesubtitle{Resources}
+\begin{block}{Books}
+\begin{enumerate}
+\item R. Martin, "Clean Code", Prentice Hall (2008)
+\item K. Beck, "Test Driven Development", Addison-Westley (2002)
+\item M. Fowler, K. Beck, J. Brant, W. Opdyke, "Refactoring", Addison-Westley (1999)
+\end{enumerate}
+\end{block}
+
+\begin{block}{Online}
+\begin{enumerate}
+\item \url{http://c2.com/cgi/wiki?SelfDocumentingCode}
+\item \url{http://www.agiledata.org/essays/tdd.html}
+\item \url{http://sourcemaking.com/refactoring}
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\subsection{SystemC programming}
+
+\begin{frame}
+\frametitle{SystemC programming}
+\framesubtitle{Summary}
+
+\begin{itemize}
+\item Learn to describe a component using models at different levels of abstraction
+\item Perform tests on a component in isolation or when communicating with components from other teams
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{SystemC programming}
+\framesubtitle{Tools}
+
+\begin{block}{The library itself}
+\begin{itemize}
+\item SystemC: \url{http://www.accellera.org/downloads/standards/systemc} \,\,\, (cross-platform) (requires free registration)
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{SystemC programming}
+\framesubtitle{Resources}
+\begin{block}{Books}
+\begin{itemize}
+\item D. Black, J. Donovan, B. Bunton, A. Keist, \\  "SystemC: from the ground up", Springer (2010)
+\end{itemize}
+\end{block}
+
+\begin{block}{Online}
+\begin{enumerate}
+\item \url{http://www.asic-world.com/systemc/tutorial.html}
+\item \url{http://www.doulos.com/knowhow/systemc/tutorial}
+\item \url{http://www.ht-lab.com/howto/vh2sc_tut/vh2sc_tut.html}
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\section{Organization}
+
+\section{Exam}
+
+\begin{frame}
+\frametitle{The examination}
+\framesubtitle{Summary}
+\begin{block}{Project report}
+One for each team, must be delivered by 24 hours before the exam in electronic format by email. This is mandatory to gain
+access to the oral exam.
+\end{block}
+
+\begin{block}{Oral}
+It will involve discussion of the project report and the specific contribution of the student. Additional
+oral/written questions will complete the examination. Duration: between 10 and 20 minutes.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The examination}
+\framesubtitle{Project report}
+
+\begin{block}{What to put into it}
+\begin{itemize}
+\item Describe the activities performed, with UML diagrams and code snippets where necessary
+\item Describe your interaction with other groups
+\item Create a timeline of your development on the repository
+\item Make specific mentions to issues both solved and still opened
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The examination}
+\framesubtitle{Oral}
+
+\begin{block}{Topics covered}
+\begin{itemize}
+\item UML
+\item Principles of clean code, refactoring and test driven development
+\item Git usage
+\item Issue tracking usage
+\item SystemC programming
+\end{itemize}
+\end{block}
 
 \end{frame}
