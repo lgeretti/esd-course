@@ -11,7 +11,7 @@ The team designing one component needs to have minimum knowledge of the remainin
 \end{exampleblock}
 \pause
 \begin{alertblock}{To make components interact requires {\bfseries collaboration}}
-Teams need to exchange information and specification in an efficient/effective way
+Teams need to exchange information and specifications in an efficient/effective way
 \end{alertblock}
 \end{frame}
 
@@ -19,7 +19,7 @@ Teams need to exchange information and specification in an efficient/effective w
 \frametitle{Objectives}
 \begin{enumerate}
 \item Become familiar with tools that facilitate team collaboration
-\item Acquire expertise in designing techniques for large projects
+\item Acquire expertise in design techniques for large projects
 \item Learn a programming language for the design of electronic systems
 \end{enumerate}
 \end{frame}
@@ -183,6 +183,10 @@ While the tools have been chosen specifically to be usable on a Windows machine 
 \item Perform tests on a component in isolation or when communicating with components from other teams
 \end{itemize}
 
+\pause
+\begin{block}{Synthesis will not be covered}
+Testing will be performed at the code level only.
+\end{block}
 \end{frame}
 
 \begin{frame}
@@ -218,13 +222,74 @@ While the tools have been chosen specifically to be usable on a Windows machine 
 
 \section{Organization}
 
+\begin{frame}
+\frametitle{Organization of the course}
+\framesubtitle{Summary}
+\begin{enumerate}
+\item Modeling with UML: theory and some practice
+\item Software engineering: theory only
+\item Version control with Git: theory and practice
+\item Issue tracking with BitBucket: some theory, mainly practice
+\item Design with SystemC: theory and practice
+\item Design of a System-on-Chip (SoC) with SystemC: practice only
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Organization of the course}
+\framesubtitle{Design of a System-on-Chip}
+
+\begin{block}{What is a System-on-Chip?}
+An SoC is an integrated circuit that includes all the necessary components of a computer within a single package.
+\end{block}
+\pause
+\begin{block}{What does it include?}
+Essentially anything:
+\begin{itemize}
+\item Processing (analog or digital)
+\item Storage (volatile or persistent)
+\item Voltage regulation for internal components
+\end{itemize}
+\pause
+\end{block}
+\begin{block}{What do we need to build a computer?}
+Very little: with proper buffering/amplification/matching, you can just wire the SoC pins to external I/O ports and to the power supply.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Organization of the course}
+\framesubtitle{Example of a SoC (from Wikipedia)}
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{lecture01/img/ARMSoCBlockDiagram.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Organization of the course}
+\framesubtitle{How to develop "our" SoC}
+\begin{block}{We split the class into teams}
+\begin{itemize}
+\item Each team has the exclusive responsibility of a component or sub-component
+\item A component may be completed or held back for another new component
+\item If necessary, responsibility of a component may be passed on to another team
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{There is no particular focus on achievements}
+We are not supposed to complete the project within the limited hours allowed for the course. There is more
+focus on methodology than results.
+\end{block}
+
+\end{frame}
+
 \section{Exam}
 
 \begin{frame}
 \frametitle{The examination}
 \framesubtitle{Summary}
 \begin{block}{Project report}
-One for each team, must be delivered by 24 hours before the exam in electronic format by email. This is mandatory to gain
+One for each team, must be delivered at least 24 hours before the exam in electronic format by email. This is mandatory to gain
 access to the oral exam.
 \end{block}
 
