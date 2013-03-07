@@ -1,3 +1,4 @@
+*.pdf
 lecture??.*
 !lecture??.tex
 slides.tex.aux
