@@ -1,1 +1,111 @@
 \section{Introduction}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{What is a version control system (VCS)?}
+
+\begin{block}{A software that allows to keep snapshots ("revisions") of a code base}
+\begin{itemize}
+\item Snapshots allow to split the development phase into small chunks with well-identified concerns
+\item Previous snapshots can be consulted to help identify bugs, to restore previous code, etc.
+\item Having well-identified milestones on the code base allows to compare and merge results from multiple developers
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{No version control: typical scenarios of code development}
+
+\begin{enumerate}
+\item
+\begin{block}{Overwriting the same source files over and over}
+\begin{itemize}
+\item You can't check why a certain bug has now surfaced in respect to a previous version
+\item If another developer also works on a given file, identifying/importing/exporting changes can be difficult
+\end{itemize}
+\end{block}
+\pause
+\item
+\begin{block}{Keeping numbered archives of the code base}
+\begin{itemize}
+\item Two developers must agree on a unique way of numbering, if they want to interact
+\item You most likely need to archive the whole code base
+\item Such archives inevitably end up thrown around your filesystem, possibly on multiple machines
+\end{itemize}
+\end{block}
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{What does a version control system offer?}
+
+\begin{block}{Essentially:}
+\begin{itemize}
+\item To {\em commit} a snapshot, when desired, along with a comment 
+\item To create {\em branches} of development where experimental features can be tested in isolation
+\item To compare entire commits or specific files
+\item To {\em merge} commits, either between different branches or between different developers
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{Centralized versus distributed VCS}
+
+\begin{block}{Centralized}
+\begin{itemize}
+\item Commits are directly sent to a central {\em repository} from where all developers get their code base
+\end{itemize}
+\end{block}
+
+\begin{block}{Distributed}
+\begin{itemize}
+\item Each developer has its local copy of a {\em remote} repository, and commits remain local until {\em pushed} remotely
+\end{itemize}
+\end{block}
+
+See also: \\  \url{http://en.wikipedia.org/wiki/Comparison_of_revision_control_software}.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{Advantages of a distributed VCS}
+
+\begin{itemize}
+\item You can work from any place, without the need of network connectivity until you need to "publish" your commits
+\item A local copy of the repository means maximum speed of comparisons, checkout of branches, etc.
+\item The distinction between a {\em commit} and a {\em push} encourages having frequent, small commits that allow to {\em amend} commit mistakes and facilitate merging
+\end{itemize}
+
+\end{frame}
+
+\section{Git}
+
+\begin{frame}
+\frametitle{Git}
+\framesubtitle{Why Git?}
+
+\begin{block}{Git is not the only DVCS out there}
+\begin{itemize}
+\item Open-source alternatives: notably Mercurial and Bazaar
+\item Proprietary alternatives: notably BitKeeper
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Git has a growing spread}
+\begin{itemize}
+\item A lot of projects, both large and small, already use it
+\item Many online code hosting services support it: e.g., Google Code, GitHub and BitBucket
+\item It is integrated (natively or by plugins) into several IDEs
+\item It is well known in the online community, documented and supported
+\end{itemize}
+\end{block}
+
+\end{frame}
