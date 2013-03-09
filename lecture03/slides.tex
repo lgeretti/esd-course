@@ -118,14 +118,33 @@ See also: \\  \url{http://en.wikipedia.org/wiki/Comparison_of_revision_control_s
 \texttt{\$ git config ---global user.name "Name Surname"} \\
 \texttt{\$ git config ---global user.email "surname.name@spes.uniud.it"}
 \end{block}
+
+\begin{block}{Add automatic full syntax coloring (helps a little)}
+\texttt{\$ git config ---global color.ui true}
+\end{block}
+\pause
+\texttt{---global} just means that these settings are valid for all repositories on your machine.
+\end{frame}
+
+\begin{frame}
+\frametitle{Git}
+\framesubtitle{Additional setup}
+
+\begin{block}{For sending patches via email (may become useful)}
+\texttt{\$ git config ---global sendemail.chainreplyto true} \\
+\texttt{\$ git config ---global sendemail.smtpserver posting.uniud.it} \\
+\texttt{\$ git config ---global sendemail.smtpserverport 587} \\
+\texttt{\$ git config ---global sendemail.smtpencryption tls} \\
+\texttt{\$ git config ---global sendemail.smtpuser myuser} \\
+\texttt{\$ git config ---global sendemail.smtppass mypass}
+\end{block}
+
 \pause
 \begin{block}{Add some aliases for commands (optional)}
 \texttt{\$ git config ---global alias.ci commit} \\
-\texttt{\$ git config ---global alias.st status}
+\texttt{\$ git config ---global alias.st status} \\
 etc.
 \end{block}
-\pause
-\texttt{---global} just means that these settings are valid for all repositories on your machine. See the \texttt{.gitconfig} file in your home directory.
 \end{frame}
 
 \subsection{Creating repos}
@@ -135,6 +154,7 @@ etc.
 
 \texttt{\$ git init}
 
+\bigskip
 \begin{block}{It creates a new repository}
 The repository is created in the current working directory, and will be responsible for all files and subdirectories within.
 \end{block}
@@ -150,6 +170,7 @@ In particular, the \texttt{.git/config} file contains configuration for the repo
 
 \texttt{\$ git status}
 
+\bigskip
 \begin{block}{It shows some relevant information}
 \begin{itemize}
 \item The current {\em branch} (more on that later)
@@ -182,7 +203,7 @@ At the moment we have the \texttt{Initial commit} text, and \texttt{nothing to c
 \frametitle{Staging files}
 \framesubtitle{Adding files to the index}
 
-\begin{block}{Create a new file and check the status (Unix)}
+\begin{block}{Create a new file and check the status}
 \begin{tabular}{ll}
 \texttt{\$ touch file1} & to create a new file \\
 \texttt{\$ ls} & to see that it exists in the filesystem \\
@@ -276,14 +297,14 @@ otherwise identifying commits becomes difficult.
 \begin{block}{Let's perform a couple of other commits}
 \texttt{\$ git add file1} \\
 \texttt{\$ git commit -m "Added a first line of text to file1"} \\
-\texttt{\$ echo "Second line" >> file1} \\
-\texttt{\$ echo "A" >> file2} \\ 
+\texttt{\$ echo "Second line" >\;\!\!> file1} \\
+\texttt{\$ echo "A" >\;\!\!> file2} \\ 
 \texttt{\$ mkdir mydir} \\ 
 \texttt{\$ git add file1 file2 mydir} \\
 \texttt{\$ git commit -m "Modified file1 and created file2 and mydir"} 
 
 \medskip
-Note that you can add as many files as you want to the stage area. However, directories are not tracked: only files with their path.
+Note that you can add as many files as you want to the stage area. However, directories are not tracked: only files, along with their paths.
 \end{block}
 
 \end{frame}
@@ -298,7 +319,7 @@ The quickest: \\
 
 \medskip
 Many variants exist for more/less info, the most compact: \\
-\texttt{\$ git log ---pretty=oneline ---abbrev-commit} 
+\texttt{\$ git log ---oneline ---abbrev-commit} 
 
 \medskip
 To show only the latest \texttt{n} commits: \\
@@ -349,9 +370,9 @@ As with a tree, creating a new branch and committing to it does not change the b
 \medskip
 \begin{itemize}
 \item The initial (and usually primary) branch is called {\em master}
-\item Each branch holds a reference called \texttt{HEAD} that points to the latest commit for the branch
-\item A new branch has \texttt{HEAD} equal to the commit on which it was created
-\item Each new commit on a branch moves the \texttt{HEAD} correspondingly 
+\item Each branch holds a reference that points to the latest commit for the branch
+\item A new branch points to the commit on which it was created
+\item Each new commit on a branch moves the pointer accordingly
 \end{itemize}
 \end{block}
 
@@ -362,43 +383,114 @@ As with a tree, creating a new branch and committing to it does not change the b
 \framesubtitle{Check out a commit}
 
 \begin{block}{To start working on a branch, we must move to it}
-A {\em checkout} is an operation that moves the current repository to a commit:
+A {\em checkout} is an operation that moves the current repository (i.e., the \texttt{HEAD}) to a commit:
 
 \texttt{\$ git checkout <hash>}
 
 \medskip
-where the \texttt{<hash>} is a hash value taken from the commit log. Even a prefix of the hash works, as long as it is unique in the repository. 
+where the \texttt{<hash>} is a hash value taken from the commit log. A prefix of the hash can be used, if it is unique in the repo. 
 \end{block}
 
 \pause
-\begin{block}{Checking out can be relative to the \texttt{HEAD} of a branch}
+\begin{block}{Checking out can be relative to a branch name}
 \begin{tabular}{ll}
 \texttt{\$ git branch other} & create a new branch \texttt{other} \\
-\texttt{\$ git checkout master} & the \texttt{HEAD} of master \\
-\texttt{\$ git checkout other} & the \texttt{HEAD} of \texttt{other} \\
-\texttt{\$ git checkout master$\sim$} & the commit before \texttt{HEAD} \\
-\texttt{\$ git checkout master$\sim$2} & two commits before \texttt{HEAD}
+\texttt{\$ git checkout master} & the latest commit on master \\
+\texttt{\$ git checkout other} & the latest commit on \texttt{other} \\
+\texttt{\$ git checkout master$\sim$} & the commit before the latest \\
+\texttt{\$ git checkout master$\sim$2} & two commits before the latest
 \end{tabular}
 \end{block}
 \end{frame}
 
 \begin{frame}
-\frametitle{Committing files}
+\frametitle{Branching}
 \framesubtitle{Use checkout to move around}
 
 \begin{block}{In the end, we always check out a commit}
-If such commit is a \texttt{HEAD}, we can continue adding commits from there.
+If such commit is the latest for the current branch, we can continue adding commits from there.
 \begin{itemize}
 \item Commits cannot (normally) be inserted in the middle of the commit tree: only on the leaves.
 \end{itemize}
-\texttt{\$ git checkout <hash>}
+If it is not, we are in the {\em detached} state: \\
+\texttt{\$ git checkout master$\sim$} \\
+\texttt{\$ git branch}
 
 \medskip
-where the \texttt{<hash>} is a hash value taken from the commit log. Even a prefix of the hash works, as long as it is unique in the repository.
+It is advisable to start making commits after having created a branch for them, otherwise it may become unreachable.
 \end{block}
-\pause
-\begin{block}{The checkout mechanism is very generic and powerful}
-You can move to a specific {\em branch} (discussed later) and a position related to the its commit (called the \texttt{HEAD}). This is easier than
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{Continue development on a branch}
+
+\begin{block}{We can start a branch from anywhere, not necessarily the latest of a branch}
+\texttt{\$ git checkout master$\sim$} \\
+\texttt{\$ git branch newbranch} \\
+\texttt{\$ git checkout newbranch} \\
+\texttt{\$ touch file3} \\
+\texttt{\$ git add file3} \\
+\texttt{\$ git commit -m "Added file3"} \\
+\texttt{\$ git checkout master} \\
+\texttt{\$ git log ---graph ---oneline ---decorate}
+\medskip
+
+The log command shows that the two branches have a different "history", namely \texttt{newbranch} starts from the second commit and then adds file3.
 \end{block}
 \end{frame}
 
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{Merging}
+
+\begin{block}{There may be a point when we want to {\em merge} results from a branch}
+\texttt{\$ git checkout master} \\
+\texttt{\$ git merge newbranch}  (if necessary, change the commit message)\\
+\texttt{\$ git log ---graph ---oneline ---decorate}
+\medskip
+
+We always checkout the destination branch and indicate the source branch in the merge command. The log command shows that the two branches have merged, i.e., \texttt{master} incorporates the changes from \texttt{newbranch}.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{Conflicts when merging}
+
+\begin{block}{Not always changes from two branches are independent}
+\texttt{\$ git checkout master}\\
+\texttt{\$ echo "Third line" >\;\!\!> file1 \&\& git add file1} \\
+\texttt{\$ git commit -m "Added third line to file1"}\\
+\texttt{\$ git checkout newbranch}\\
+\texttt{\$ echo "Another line" >\;\!\!> file1 \&\& git add file1} \\
+\texttt{\$ git commit -m "Added another line to file1"}\\
+\texttt{\$ git checkout master}\\
+\texttt{\$ git merge newbranch}\\
+\texttt{\$ git status}
+\medskip
+
+This causes a conflict because different text occupies the same position for the same file.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{Resolving merge conflicts}
+
+\begin{block}{Conflicts must be resolved by manual editing, followed by a commit}
+\texttt{\$ nano file1} (and remove the parts that you don't want)\\
+\texttt{\$ git commit -m "Merged changes from newbranch"}\\
+\end{block}
+\pause
+\begin{block}{Alternatively use a merge tool (choose one from the list, recommended to install {\em meld})}
+\texttt{\$ git mergetool}
+
+\medskip
+Here you can choose to copy the content from either of the conflicting files into the destination file. Then you commit as in the "manual" case.
+\end{block}
+
+\end{frame}
