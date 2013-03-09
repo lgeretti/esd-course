@@ -60,7 +60,7 @@
 
 \begin{block}{Centralized}
 \begin{itemize}
-\item Commits are directly sent to a central {\em repository} from where all developers get their code base
+\item Commits are directly sent to a central {\em repository} ({\em repo} for brevity) from where all developers get their code base
 \end{itemize}
 \end{block}
 
@@ -81,12 +81,12 @@ See also: \\  \url{http://en.wikipedia.org/wiki/Comparison_of_revision_control_s
 \begin{itemize}
 \item You can work from any place, without the need of network connectivity until you need to "publish" your commits
 \item A local copy of the repository means maximum speed of comparisons, checkout of branches, etc.
-\item The distinction between a {\em commit} and a {\em push} encourages having frequent, small commits that allow to {\em amend} commit mistakes and facilitate merging
+\item The distinction between a {\em commit} and a {\em push} encourages having frequent, small commits that allow to {\em amend} mistakes and facilitate merging
 \end{itemize}
 
 \end{frame}
 
-\section{Git}
+\section{Git Tutorial}
 
 \begin{frame}
 \frametitle{Git}
@@ -107,5 +107,298 @@ See also: \\  \url{http://en.wikipedia.org/wiki/Comparison_of_revision_control_s
 \item It is well known in the online community, documented and supported
 \end{itemize}
 \end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Git}
+\framesubtitle{Some setup and preferences}
+
+\begin{block}{Set your username and email for identification (mandatory)}
+\texttt{\$ git config ---global user.name "Name Surname"} \\
+\texttt{\$ git config ---global user.email "surname.name@spes.uniud.it"}
+\end{block}
+\pause
+\begin{block}{Add some aliases for commands (optional)}
+\texttt{\$ git config ---global alias.ci commit} \\
+\texttt{\$ git config ---global alias.st status}
+etc.
+\end{block}
+\pause
+\texttt{---global} just means that these settings are valid for all repositories on your machine. See the \texttt{.gitconfig} file in your home directory.
+\end{frame}
+
+\subsection{Creating repos}
+
+\begin{frame}
+\frametitle{Repository creation}
+
+\texttt{\$ git init}
+
+\begin{block}{It creates a new repository}
+The repository is created in the current working directory, and will be responsible for all files and subdirectories within.
+\end{block}
+\begin{block}{The information is within the \texttt{.git} subdirectory}
+In particular, the \texttt{.git/config} file contains configuration for the repository.
+\end{block}
+\end{frame}
+
+\subsection{Status checking}
+
+\begin{frame}
+\frametitle{Status checking}
+
+\texttt{\$ git status}
+
+\begin{block}{It shows some relevant information}
+\begin{itemize}
+\item The current {\em branch} (more on that later)
+\item New files not committed to the repository
+\item Modified files
+\item Removed files
+\end{itemize}
+At the moment we have the \texttt{Initial commit} text, and \texttt{nothing to commit} since no commit has been made and the repository is empty.
+\end{block}
 
 \end{frame}
+
+\subsection{Staging}
+
+\begin{frame}
+\frametitle{Staging files}
+\framesubtitle{What is staging?}
+
+\begin{block}{Facts on version control systems}
+\begin{itemize}
+\item Files must be explicitly added to the repository (i.e., the file must be "tracked" or "added to the index"): being inside the directory of the repository does not make them part of it yet 
+\item Such operation is called "tracking a file" or "adding a file to the index"
+\item When a file is tracked, it can be chosen to be part of a commit (i.e., "staged")
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Staging files}
+\framesubtitle{Adding files to the index}
+
+\begin{block}{Create a new file and check the status (Unix)}
+\begin{tabular}{ll}
+\texttt{\$ touch file1} & to create a new file \\
+\texttt{\$ ls} & to see that it exists in the filesystem \\
+\texttt{\$ git status} & to check what Git says about it
+\end{tabular}
+
+\medskip
+Now you are informed that there are {\em untracked} files.
+\end{block}
+
+\pause
+
+\begin{block}{Add it to the index and check the status}
+\begin{tabular}{ll}
+\texttt{\$ git add file1} & to track and simultaneously stage the file \\
+\texttt{\$ git status} & to check what Git says about it
+\end{tabular}
+
+\medskip
+Now you are informed that there are changes to be committed. The file now is both tracked (since it is new) and added to the stage area.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Staging files}
+\framesubtitle{Later modifications and removal from the staged area}
+
+\begin{block}{What happens if we change a file that was added to the stage area}
+\texttt{\$ echo "first line" >\;\!\!> file1} \\
+\texttt{\$ git status} 
+
+\medskip
+Changing a staged file does not affect the {\em copy} of the file already in the stage area.
+To incorporate the new changes, you must explicitly add the file again
+\end{block}
+
+\pause
+\begin{block}{How to remove a file from the staged area}
+\texttt{\$ git reset file1} \\
+will restore the file as it was at the latest commit. Will not work until we have at least one commit!
+\end{block}
+
+\end{frame}
+
+\subsection{Committing}
+
+\begin{frame}
+\frametitle{Committing files}
+\framesubtitle{What is committing?}
+
+\begin{block}{Some facts on version control systems}
+\begin{itemize}
+\item Committing practically stores a snapshot of the repository in the current state, with consideration to what has changed in the index
+\item The information stored in a commit also includes a user-defined message summarizing the changes, the information on the {\em committer} (i.e., the developer), the commit time, the commit hash code (i.e., a unique version)
+\item Committing allows at a later time to "re-roll" the repository to such state
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Committing files}
+\framesubtitle{Performing the commit}
+
+\begin{block}{Commit the changes in the index and check the status}
+\texttt{\$ git commit -m "Significant message of your choice"}
+\texttt{\$ git status}
+
+\medskip
+The commit itself shows some basic info on the operation, while the status now does not have either the \texttt{Initial commit} message or the info on the staged file.
+\end{block}
+
+\pause
+\begin{block}{Messages should be meaningful}
+Examples of what should be avoided:
+\begin{itemize}
+\item "Minor changes"
+\item "Various fixes"
+\item "Another commit"
+\end{itemize}
+otherwise identifying commits becomes difficult.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Committing files}
+\framesubtitle{Additional commits}
+
+\begin{block}{Let's perform a couple of other commits}
+\texttt{\$ git add file1} \\
+\texttt{\$ git commit -m "Added a first line of text to file1"} \\
+\texttt{\$ echo "Second line" >> file1} \\
+\texttt{\$ echo "A" >> file2} \\ 
+\texttt{\$ mkdir mydir} \\ 
+\texttt{\$ git add file1 file2 mydir} \\
+\texttt{\$ git commit -m "Modified file1 and created file2 and mydir"} 
+
+\medskip
+Note that you can add as many files as you want to the stage area. However, directories are not tracked: only files with their path.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Committing files}
+\framesubtitle{Checking the log}
+
+\begin{block}{Git has plenty of ways to show the history of previous commits}
+The quickest: \\
+\texttt{\$ git log}
+
+\medskip
+Many variants exist for more/less info, the most compact: \\
+\texttt{\$ git log ---pretty=oneline ---abbrev-commit} 
+
+\medskip
+To show only the latest \texttt{n} commits: \\
+\texttt{\$ git log -n}
+
+\medskip
+
+And many more...
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Committing files}
+\framesubtitle{Amending a commit}
+
+\begin{block}{What if the latest commit had some mistakes?}
+For example, our latest message was incorrect. Then do: \\
+\texttt{\$ git commit ---amend}
+
+\medskip
+It opens an editor (\texttt{nano} on Linux) to modify the message: we 
+\begin{enumerate}
+\item remove the "and mydir" part of the message,
+\item save with Ctrl+X,
+\item confirm with Y/y,
+\item confirm the temporary file.
+\end{enumerate}
+Checking the log shows only the new commit. Precisely, the new commit is merged with the previous one. Your amendment can include modified files, new files, etc.: just add to the stage and amend.
+\end{block}
+\end{frame}
+
+\subsection{Branching}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{What's branching for?}
+
+\begin{block}{Branches allow for experimental development}
+As with a tree, creating a new branch and committing to it does not change the branch we came from.
+\end{block}
+
+\begin{block}{How to create a branch, and show branches}
+\begin{tabular}{ll}
+\texttt{\$ git branch <mybranchname>} & to create \\
+\texttt{\$ git branch} & to show all branches
+\end{tabular}
+
+\medskip
+\begin{itemize}
+\item The initial (and usually primary) branch is called {\em master}
+\item Each branch holds a reference called \texttt{HEAD} that points to the latest commit for the branch
+\item A new branch has \texttt{HEAD} equal to the commit on which it was created
+\item Each new commit on a branch moves the \texttt{HEAD} correspondingly 
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{Check out a commit}
+
+\begin{block}{To start working on a branch, we must move to it}
+A {\em checkout} is an operation that moves the current repository to a commit:
+
+\texttt{\$ git checkout <hash>}
+
+\medskip
+where the \texttt{<hash>} is a hash value taken from the commit log. Even a prefix of the hash works, as long as it is unique in the repository. 
+\end{block}
+
+\pause
+\begin{block}{Checking out can be relative to the \texttt{HEAD} of a branch}
+\begin{tabular}{ll}
+\texttt{\$ git branch other} & create a new branch \texttt{other} \\
+\texttt{\$ git checkout master} & the \texttt{HEAD} of master \\
+\texttt{\$ git checkout other} & the \texttt{HEAD} of \texttt{other} \\
+\texttt{\$ git checkout master$\sim$} & the commit before \texttt{HEAD} \\
+\texttt{\$ git checkout master$\sim$2} & two commits before \texttt{HEAD}
+\end{tabular}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Committing files}
+\framesubtitle{Use checkout to move around}
+
+\begin{block}{In the end, we always check out a commit}
+If such commit is a \texttt{HEAD}, we can continue adding commits from there.
+\begin{itemize}
+\item Commits cannot (normally) be inserted in the middle of the commit tree: only on the leaves.
+\end{itemize}
+\texttt{\$ git checkout <hash>}
+
+\medskip
+where the \texttt{<hash>} is a hash value taken from the commit log. Even a prefix of the hash works, as long as it is unique in the repository.
+\end{block}
+\pause
+\begin{block}{The checkout mechanism is very generic and powerful}
+You can move to a specific {\em branch} (discussed later) and a position related to the its commit (called the \texttt{HEAD}). This is easier than
+\end{block}
+\end{frame}
+
