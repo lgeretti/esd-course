@@ -419,6 +419,49 @@ Attention: these commands are destructive!
 
 \end{frame}
 
+\begin{frame}
+\frametitle{Miscellaneous maintenance}
+\framesubtitle{Ignoring files}
+
+\begin{block}{What if I have files around that I never want to stage?}
+Typically, output binaries or other intermediate files.
+\end{block}
+\pause
+\begin{block}{Create a \texttt{.gitignore} file on a directory}
+\begin{itemize}
+\item Within a \texttt{.gitignore} file you can insert a list of entries that identify file names that will be ignored by Git
+\item You can use '\texttt{*}' for "any number of characters", '\texttt{?}' for "any one character", '\texttt{!}' in front of an entry to exclude a class of file names
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{One \texttt{.gitignore} file per directory may be present}
+The ignore rules are applied from the outermost \texttt{.gitignore} down to the innermost.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Miscellaneous maintenance}
+\framesubtitle{How ignoring works}
+
+\begin{block}{Example:}
+\begin{tabular}{ll}
+\texttt{file0?} & any file starting with \texttt{file0} plus another char \\
+\texttt{test.*} & any file starting with \texttt{test.}\\
+\texttt{!test.tex} & except for \texttt{test.tex} \\
+\end{tabular}
+\end{block}
+
+\pause
+\begin{block}{Do not forget to track them}
+\texttt{.gitignore} files should be kept within the repository
+\end{block}
+\pause
+\begin{block}{Minor trick}
+Create and track an empty \texttt{.gitignore} file in an empty directory in order to track an "empty" directory
+\end{block}
+\end{frame}
+
 \subsection{Branching}
 
 \begin{frame}
@@ -898,8 +941,8 @@ It addresses the case of external dependencies that come from another repository
 \framesubtitle{Push and pull a submodule}
 
 \begin{block}{There is a dedicated mechanism for pulling}
-\texttt{\$ git commit -m "Added dependency submodule"}
-\texttt{\$ git push}
+\texttt{\$ git commit -m "Added dependency submodule"} \\
+\texttt{\$ git push} \\
 \texttt{\$ cd ../myproject2} \\
 \texttt{\$ git checkout master} \\
 \texttt{\$ git pull} \\
@@ -949,11 +992,16 @@ where we see that the \texttt{mydependency} directory is recognized as having ne
 \texttt{\$ git submodule update}
 \end{block}
 \pause
-\begin{block}{The above procedure is equivalent to the classical:}
+\begin{block}{The above procedure is equivalent to the canonical:}
 \texttt{\$ cd ../myproject2} \\
 \texttt{\$ git pull} \\
 \texttt{\$ cd mydependency} \\
 \texttt{\$ git pull}
+
+\medskip
+but clearly is quicker if multiple dependencies are present
 \end{block}
 
 \end{frame}
+
+% Add diffs and patches?
