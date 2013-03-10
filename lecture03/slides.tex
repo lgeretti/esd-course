@@ -393,7 +393,6 @@ In the second case, the modification is already staged for commit. Otherwise, wh
 
 \end{frame}
 
-
 \begin{frame}
 \frametitle{Miscellaneous maintenance}
 \framesubtitle{Recovering from modifications}
@@ -407,6 +406,7 @@ In the second case, the modification is already staged for commit. Otherwise, wh
 \end{itemize}
 \end{block}
 
+\pause
 \begin{block}{Cleaning modifications and untracked files in batch}
 \begin{itemize}
 \item All modified tracked files can also be dropped with \\
@@ -822,7 +822,6 @@ but it remains read-only since we are put in detached state.
 \begin{block}{New branches on \texttt{myproject2} must be manually tracked}
 \texttt{\$ git branch ---track newbranch origin/newbranch} \\
 \texttt{\$ git branch -a} \\
-
 \begin{itemize}
 \item \texttt{---track} sets up both push and pull, and is performed on a repo for which no local branch exists for the remote branch
 \item The default of not tracking branches other than \texttt{master} is for cleanliness purposes: normally a branch is maintained by one developer only
@@ -848,6 +847,113 @@ while pulling them is done with a normal pull: \\
 \texttt{\$ cd ../myproject} \\
 \texttt{\$ git pull} \\
 \texttt{\$ git tag}
+\end{block}
+
+\end{frame}
+
+\subsection{Submodules}
+
+\begin{frame}
+\frametitle{Submodules}
+\framesubtitle{What is a submodule?}
+
+\begin{block}{A submodule is a nested repository}
+It addresses the case of external dependencies that come from another repository
+\end{block}
+\pause
+
+\begin{block}{Let's create a new remote repository with some commits}
+\texttt{\$ cd ..} \\
+\texttt{\$ mkdir mydependency.git \&\& cd mydependency.git} \\
+\texttt{\$ git init ---bare} \\
+\texttt{\$ cd ..} \\
+\texttt{\$ git clone mydependency.git \&\& cd mydependency} \\
+\texttt{\$ touch file1 \&\& git add file1} \\
+\texttt{\$ git commit -m "Initial commit"} \\
+\texttt{\$ git push origin master}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Submodules}
+\framesubtitle{Add the submodule (on \texttt{master})}
+
+\begin{block}{The directory of a submodule is treated differently}
+\texttt{\$ cd ../myproject} \\
+\texttt{\$ git checkout master} \\
+\texttt{\$ git submodule add ../mydependency.git} \\
+\texttt{\$ cd mydependency \&\& git status} \\
+\texttt{\$ cd .. \&\& git status}
+\medskip
+\begin{itemize}
+\item The \texttt{.gitmodules} file holds the configuration of modules within the repository
+\item In practice, only the changes to the submodule directory are tracked
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Submodules}
+\framesubtitle{Push and pull a submodule}
+
+\begin{block}{There is a dedicated mechanism for pulling}
+\texttt{\$ git commit -m "Added dependency submodule"}
+\texttt{\$ git push}
+\texttt{\$ cd ../myproject2} \\
+\texttt{\$ git checkout master} \\
+\texttt{\$ git pull} \\
+\texttt{\$ git submodule init} \\
+\texttt{\$ git submodule update}
+
+\medskip
+where the \texttt{init} operation is only needed if a new submodule is present in the \texttt{.gitmodules} file.
+\begin{itemize}
+\item The branches of the two clones must be the same, since \texttt{.gitmodules} is a regular versioned file
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Submodules}
+\framesubtitle{Commit within the submodule}
+
+\begin{block}{Submodules are initially set with a detached \texttt{HEAD}}
+This way we must be explicit if we want to make changes to a dependency.
+
+\medskip
+\texttt{\$ cd ../myproject/mydependency} \\
+\texttt{\$ git checkout master} \\
+\texttt{\$ touch file2 \&\& git add file2} \\
+\texttt{\$ git commit -m "Added file2" \&\& git push} \\
+\texttt{\$ cd .. \&\& git status} \\
+
+\medskip
+where we see that the \texttt{mydependency} directory is recognized as having new commits.
+\begin{itemize}
+\item Commits and pushes on the submodule are handled separated from those on the parent repository
+\item Each commit on a dependency must be reflected by a commit on the parent repository
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Submodules}
+\framesubtitle{Pulling changes from a repository with submodules}
+
+\begin{block}{The updates require both a pull and an update}
+\texttt{\$ cd ../myproject2} \\
+\texttt{\$ git pull} \\
+\texttt{\$ git submodule update}
+\end{block}
+\pause
+\begin{block}{The above procedure is equivalent to the classical:}
+\texttt{\$ cd ../myproject2} \\
+\texttt{\$ git pull} \\
+\texttt{\$ cd mydependency} \\
+\texttt{\$ git pull}
 \end{block}
 
 \end{frame}
