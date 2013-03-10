@@ -326,8 +326,30 @@ To show only the latest \texttt{n} commits: \\
 \texttt{\$ git log -n}
 
 \medskip
+To show details on a commit: \\
+\texttt{\$ git show <commit>}
+
+\medskip
 
 And many more...
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Committing files}
+\framesubtitle{Tags}
+
+\begin{block}{Having commits identified by generated 40-bytes hexadecimal values is less than ideal}
+Tags are references used to provide names to specific commits : \\
+\texttt{\$ git tag <name> -m "Description"} \\
+
+\medskip
+\begin{itemize}
+\item The name should be compact, like \texttt{working\_rtl}, or set as the release version, like \texttt{0.9.1-rc1}
+\item The message is optional but useful to have some descriptive text with \texttt{git show}
+\item Tags are listed using \texttt{git tag} with no arguments
+\item Tags are also shown with \texttt{git log ---oneline ---decorate}
+\end{itemize}
 \end{block}
 \end{frame}
 
@@ -351,6 +373,52 @@ Checking the log shows only the new commit. Precisely, the new commit is merged 
 \end{block}
 \end{frame}
 
+\subsection{Maintenance}
+
+\begin{frame}
+\frametitle{Miscellaneous maintenance}
+\framesubtitle{Removing files}
+
+\begin{block}{Removing files should be done in git}
+Compare \\
+\texttt{\$ rm file1} \\
+\texttt{\$ git status} \\
+with \\
+\texttt{\$ git rm file2} \\
+\texttt{\$ git status} 
+
+\medskip
+In the second case, the modification is already staged for commit. Otherwise, when many files are involved, adding missing files to the stage area becomes tedious.
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Miscellaneous maintenance}
+\framesubtitle{Recovering from modifications}
+
+\begin{block}{How to recover the removed files?}
+\begin{itemize}
+\item If modifications are not staged, like for \texttt{file2}, \\
+\texttt{\$ git checkout --- file2}
+\item Otherwise, we must unstage the modification first, with \\
+\texttt{\$ git reset}
+\end{itemize}
+\end{block}
+
+\begin{block}{Cleaning modifications and untracked files in batch}
+\begin{itemize}
+\item All modified tracked files can also be dropped with \\
+\texttt{\$ git reset ---hard}
+\item Untracked files can all be removed with \\
+\texttt{\$ git clean -fd}
+\end{itemize}
+Attention: these commands are destructive!
+\end{block}
+
+\end{frame}
+
 \subsection{Branching}
 
 \begin{frame}
@@ -370,7 +438,7 @@ As with a tree, creating a new branch and committing to it does not change the b
 \medskip
 \begin{itemize}
 \item The initial (and usually primary) branch is called {\em master}
-\item Each branch holds a reference that points to the latest commit for the branch
+\item Each branch holds a reference that points to the latest commit for the branch (the "tip")
 \item A new branch points to the commit on which it was created
 \item Each new commit on a branch moves the pointer accordingly
 \end{itemize}
@@ -382,44 +450,25 @@ As with a tree, creating a new branch and committing to it does not change the b
 \frametitle{Branching}
 \framesubtitle{Check out a commit}
 
-\begin{block}{To start working on a branch, we must move to it}
-A {\em checkout} is an operation that moves the current repository (i.e., the \texttt{HEAD}) to a commit:
+\begin{block}{To start working on a branch, we must move our state to it}
+The repository state is a special reference called \texttt{HEAD}. A {\em checkout} moves \texttt{HEAD} to a specified commit:
 
-\texttt{\$ git checkout <hash>}
+\texttt{\$ git checkout <commit>}
 
 \medskip
-where the \texttt{<hash>} is a hash value taken from the commit log. A prefix of the hash can be used, if it is unique in the repo. 
+where the \texttt{<commit>} is a reference to a commit, i.e., a branch name or a tag or a hash value. A prefix of the hash can be used, if unique in the repo. 
 \end{block}
 
 \pause
 \begin{block}{Checking out can be relative to a branch name}
 \begin{tabular}{ll}
 \texttt{\$ git branch other} & create a new branch \texttt{other} \\
-\texttt{\$ git checkout master} & the latest commit on master \\
+\texttt{\$ git checkout master} & the latest commit on \texttt{master} \\
 \texttt{\$ git checkout other} & the latest commit on \texttt{other} \\
-\texttt{\$ git checkout master$\sim$} & the commit before the latest \\
-\texttt{\$ git checkout master$\sim$2} & two commits before the latest
+\texttt{\$ git checkout master\textasciitilde{}} & the commit before the latest \\
+\texttt{\$ git checkout master\textasciitilde{}2} & two commits before the latest
 \end{tabular}
 \end{block}
-\end{frame}
-
-\begin{frame}
-\frametitle{Branching}
-\framesubtitle{Use checkout to move around}
-
-\begin{block}{In the end, we always check out a commit}
-If such commit is the latest for the current branch, we can continue adding commits from there.
-\begin{itemize}
-\item Commits cannot (normally) be inserted in the middle of the commit tree: only on the leaves.
-\end{itemize}
-If it is not, we are in the {\em detached} state: \\
-\texttt{\$ git checkout master$\sim$} \\
-\texttt{\$ git branch}
-
-\medskip
-It is advisable to start making commits after having created a branch for them, otherwise it may become unreachable.
-\end{block}
-
 \end{frame}
 
 \begin{frame}
@@ -427,7 +476,7 @@ It is advisable to start making commits after having created a branch for them, 
 \framesubtitle{Continue development on a branch}
 
 \begin{block}{We can start a branch from anywhere, not necessarily the latest of a branch}
-\texttt{\$ git checkout master$\sim$} \\
+\texttt{\$ git checkout master\textasciitilde{}} \\
 \texttt{\$ git branch newbranch} \\
 \texttt{\$ git checkout newbranch} \\
 \texttt{\$ touch file3} \\
@@ -443,6 +492,38 @@ The log command shows that the two branches have a different "history", namely \
 
 \begin{frame}
 \frametitle{Branching}
+\framesubtitle{Continue development on the detached state}
+
+\begin{block}{Commits cannot be inserted before the tip of a branch}
+If we checkout something different from the plain name of the branch (i.e., to its tip), we are in the {\em detached} state: \\
+\texttt{\$ git checkout master\textasciitilde{}} \\
+\texttt{\$ git branch}
+\end{block}
+\pause
+\begin{block}{You can still create commits in the detached state}
+In the detached state, after having made some commits, we can re-attach the \texttt{HEAD} with: \\
+\texttt{\$ git branch mynewbranch HEAD}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{An example of a commit tree}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{lecture03/img/branches.png}
+\end{figure}
+
+\begin{itemize}
+\item Since only one tree root exists, all back-references in the end reach it
+\item Moving the \texttt{HEAD} out of the detached tip would make the commits unreachable on a later time
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
 \framesubtitle{Merging}
 
 \begin{block}{There may be a point when we want to {\em merge} results from a branch}
@@ -453,6 +534,21 @@ The log command shows that the two branches have a different "history", namely \
 
 We always checkout the destination branch and indicate the source branch in the merge command. The log command shows that the two branches have merged, i.e., \texttt{master} incorporates the changes from \texttt{newbranch}.
 \end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{An example of a graph after a merge}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{lecture03/img/merging.png}
+\end{figure}
+
+\begin{itemize}
+\item The \textasciicircum{}\texttt{n} symbol refers to the previous commit on parent branch number \texttt{n}
+\item If no number is used, 1 is assumed, where 1 is always the referred branch: \texttt{master}\textasciicircum{}\texttt{1\textasciitilde{}2 = master}\textasciitilde{}\texttt{3}
+\end{itemize}
 
 \end{frame}
 
@@ -491,6 +587,248 @@ This causes a conflict because different text occupies the same position for the
 
 \medskip
 Here you can choose to copy the content from either of the conflicting files into the destination file. Then you commit as in the "manual" case.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
+\framesubtitle{Delete a branch}
+
+\begin{block}{When development on a branch ends, you should clean up}
+\texttt{\$ git branch -d newbranch} \\
+\texttt{\$ git branch} \,\,\,(to see the absence of \texttt{newbranch})
+
+\medskip
+\begin{itemize}
+\item Your \texttt{HEAD} must be on a branch different from the one to be deleted
+\item You will be warned if commits from the branch have not been merged yet
+\item If commits have been merged, only the reference of the branch is actually removed
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\subsection{Remote repos}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{What is a remote repository?}
+
+\begin{block}{A remote is a repository that different developers can use as common reference}
+One developer works on a local copy (a {\em clone}) of the remote.
+\end{block}
+\begin{block}{Developers essentially use the remote as an intermediary}
+They {\em push} their own changes to the remote, and {\em pull} from the remote the changes from other developers.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{How to create a remote repository}
+
+\begin{block}{Empty repository}
+\texttt{\$ mkdir myproject.git} \\
+\texttt{\$ cd myproject.git} \\
+\texttt{\$ git init ---bare}
+
+\begin{itemize}
+\item The \texttt{---bare} flag creates a repository with no working directory, equivalent to the \texttt{.git} hidden subdirectory
+\item The \texttt{.git} extension of the directory is just a convention
+\end{itemize}
+\end{block}
+
+\begin{block}{From an existing repository}
+\texttt{\$ cd myotherproject} \\
+\texttt{\$ git config ---bool core.bare true} \\
+\texttt{\$ cp -R .git ../myotherproject.git}
+
+\begin{itemize}
+\item We set the repo as bare, then copy the \texttt{.git} directory
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{How to clone a remote}
+
+\begin{block}{Assuming to find a directory \texttt{myproject.git} (an empty bare repo) under the current directory}
+\texttt{\$ git clone myproject.git} 
+
+\begin{itemize}
+\item The cloned directory is the same as the remote without the \texttt{.git} extension
+\item An explicit directory name can be added as second argument of the \texttt{git clone} command
+\item The name for the remote is by convention \texttt{origin}: it can be changed with the \texttt{---origin <name>} extra parameter
+\end{itemize}
+\end{block}
+
+\begin{block}{Cloning is performed once for each copy of the remote we need}
+We can create as many copies as we want, though.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Pushing to a remote}
+
+\begin{block}{Let's create a first commit and {\em push} it to the remote}
+\texttt{\$ cd myproject} \\
+\texttt{\$ touch file1 \&\& git add file1} \\
+\texttt{\$ git commit -m "First commit"} \\
+\texttt{\$ git push origin master}
+
+\begin{itemize}
+\item Here we "save" the current \texttt{master} branch to the remote, using its name \texttt{origin}
+\item Successive pushes can be done by issuing \texttt{git push} only
+\item Pushing with no arguments pushes all the commits that are missing in the remote
+\end{itemize}
+\end{block}
+
+\pause
+\begin{block}{Remote branches and their tips can be shown}
+\texttt{\$ git branch -a} \,\,\, (\texttt{a} stands for {\em all} ) \\
+\texttt{\$ git log ---graph ---oneline ---decorate}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Pushing from another clone}
+
+\begin{block}{Let's create another clone and push from it}
+\texttt{\$ cd ..} \\
+\texttt{\$ git clone myproject.git myproject2} \\
+\texttt{\$ cd myproject2} \\
+\texttt{\$ ls} \\
+\texttt{\$ touch file2 \&\& git add file2} \\
+\texttt{\$ git commit -m "Created file2"} \\
+\texttt{\$ git push}
+
+\begin{itemize}
+\item Here the clone includes the content of the remote as pushed by the first clone
+\item We do not need to push the master branch, since it already exists on the remote
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Pulling from a remote}
+
+\begin{block}{Pulling updates in respect to the remote}
+\texttt{\$ cd ../myproject} \\
+\texttt{\$ git pull} \\
+\texttt{\$ git log ---oneline} \\
+\texttt{\$ ls}
+
+\begin{itemize}
+\item Here we receive the content of the remote as pushed by the second clone
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Pulling includes merging}
+
+\begin{block}{As with local merges, conflicts may arise}
+\texttt{\$ echo "1" >\;\!\!> file3 \&\& git add file3} \\
+\texttt{\$ git commit -m "Created file3 on first clone"} \\
+\texttt{\$ git push} \\
+\texttt{\$ cd ../myproject2} \\
+\texttt{\$ echo "2" >\;\!\!> file3 \&\& git add file3} \\
+\texttt{\$ git commit -m "Created file3 on second clone"} \\
+\texttt{\$ git push} \\
+\texttt{\$ git pull}
+
+\begin{itemize}
+\item Pushing is not allowed if your local copy is behind
+\item The merging in the pull operation fails due to \texttt{file3} having conflicting content
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Resolving the conflict}
+
+\begin{block}{We therefore resolve and commit}
+\texttt{\$ git mergetool} \,\,\,(and choose the preferred content)\\
+\texttt{\$ git commit -m "Resolved conflict on file3"} \\
+\texttt{\$ git log ---oneline} \\
+\texttt{\$ git push \&\& cd ../myproject \&\& git pull} 
+
+\begin{itemize}
+\item Note that the order of commits now shows the \texttt{myproject} commit before the \texttt{myproject2} one
+\item Pushing and pulling now have no issues, since \texttt{myproject2} is ahead of \texttt{myproject}
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Pushing new branches}
+
+\begin{block}{New branches must be explicitly pushed}
+\texttt{\$ git branch newbranch} \\
+\texttt{\$ git branch -a} \\
+\texttt{\$ git push -u origin newbranch} \\
+\texttt{\$ cd ../myproject2} \\
+\texttt{\$ git pull} \\
+\texttt{\$ git branch -a}
+
+\begin{itemize}
+\item The optional \texttt{-u} ("upstream") flag allows to configure \texttt{newbranch} to pull from \texttt{origin/newbranch} in the future
+\item Note how the branch on the second clone has no local copy on \texttt{myproject2}: we can check it out with \\
+\texttt{\$ git checkout origin/newbranch} \\
+but it remains read-only since we are put in detached state.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Tracking branches}
+
+\begin{block}{New branches on \texttt{myproject2} must be manually tracked}
+\texttt{\$ git branch ---track newbranch origin/newbranch} \\
+\texttt{\$ git branch -a} \\
+
+\begin{itemize}
+\item \texttt{---track} sets up both push and pull, and is performed on a repo for which no local branch exists for the remote branch
+\item The default of not tracking branches other than \texttt{master} is for cleanliness purposes: normally a branch is maintained by one developer only
+\item The tracking operation must also be done for clones: the default is to clone \texttt{master} only
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Remote repositories}
+\framesubtitle{Pushing/pulling tags}
+
+\begin{block}{Tags can be pushed}
+\texttt{\$ git push ---tags} \\
+
+\medskip
+while pulling them is done with a normal pull: \\
+
+\texttt{\$ git tag v1.0 -m "First stable version"} \\
+\texttt{\$ git tag} \\
+\texttt{\$ git push ---tags} \\
+\texttt{\$ cd ../myproject} \\
+\texttt{\$ git pull} \\
+\texttt{\$ git tag}
 \end{block}
 
 \end{frame}
