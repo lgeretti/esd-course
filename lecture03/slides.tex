@@ -473,6 +473,25 @@ where the \texttt{<commit>} is a reference to a commit, i.e., a branch name or a
 
 \begin{frame}
 \frametitle{Branching}
+\framesubtitle{Use checkout to move around}
+
+\begin{block}{In the end, we always check out a commit}
+If such commit is the latest for the current branch, we can continue adding commits from there.
+\begin{itemize}
+\item Commits cannot (normally) be inserted in the middle of the commit tree: only on the leaves.
+\end{itemize}
+If it is not, we are in the {\em detached} state: \\
+\texttt{\$ git checkout master$\sim$} \\
+\texttt{\$ git branch}
+
+\medskip
+It is advisable to start making commits after having created a branch for them, otherwise it may become unreachable.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Branching}
 \framesubtitle{Continue development on a branch}
 
 \begin{block}{We can start a branch from anywhere, not necessarily the latest of a branch}
