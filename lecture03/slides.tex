@@ -296,15 +296,15 @@ otherwise identifying commits becomes difficult.
 \framesubtitle{Additional commits}
 
 \begin{block}{Let's perform a couple of other commits}
-\texttt{\$ git add file1} \\
-\texttt{\$ git commit -m "Added a first line of text to file1"} \\
-\texttt{\$ echo "Second line" >\;\!\!> file1} \\
-\texttt{\$ echo "A" >\;\!\!> file2} \\ 
-\texttt{\$ mkdir mydir} \\ 
-\texttt{\$ git add file1 file2 mydir} \\
-\texttt{\$ git commit -m "Modified file1 and created file2 and mydir"} 
-
-\medskip
+\begin{enumerate}
+\item \texttt{\$ git add file1} \\
+\item \texttt{\$ git commit -m "Added a first line of text to file1"} \\
+\item \texttt{\$ echo "Second line" >\;\!\!> file1} \\
+\item \texttt{\$ echo "A" >\;\!\!> file2} \\ 
+\item \texttt{\$ mkdir mydir} \\ 
+\item \texttt{\$ git add file1 file2 mydir} \\
+\item \texttt{\$ git commit -m "Modified file1 and created file2 and mydir"} 
+\end{enumerate}
 Note that you can add as many files as you want to the stage area. However, directories are not tracked (you need to add files within \texttt{mydir}).
 \end{block}
 
@@ -552,15 +552,16 @@ It is advisable to start making commits after having created a branch for them, 
 \framesubtitle{Continue development on a branch}
 
 \begin{block}{We can start a branch from anywhere, not necessarily the latest of a branch}
-\texttt{\$ git checkout master\textasciitilde{}} \\
-\texttt{\$ git branch newbranch} \\
-\texttt{\$ git checkout newbranch} \\
-\texttt{\$ touch file3} \\
-\texttt{\$ git add file3} \\
-\texttt{\$ git commit -m "Added file3"} \\
-\texttt{\$ git checkout master} \\
-\texttt{\$ git log ---graph ---oneline ---decorate}
-\medskip
+\begin{enumerate}
+\item \texttt{\$ git checkout master\textasciitilde{}} \\
+\item \texttt{\$ git branch newbranch} \\
+\item \texttt{\$ git checkout newbranch} \\
+\item \texttt{\$ touch file3} \\
+\item \texttt{\$ git add file3} \\
+\item \texttt{\$ git commit -m "Added file3"} \\
+\item \texttt{\$ git checkout master} \\
+\item \texttt{\$ git log ---graph ---oneline ---decorate}
+\end{enumerate}
 
 The log command shows that the two branches have a different "history", namely \texttt{newbranch} starts from the second commit and then adds file3.
 \end{block}
@@ -633,16 +634,17 @@ We always checkout the destination branch and indicate the source branch in the 
 \framesubtitle{Conflicts when merging}
 
 \begin{block}{Not always changes from two branches are independent}
-\texttt{\$ git checkout master}\\
-\texttt{\$ echo "Third line" >\;\!\!> file1 \&\& git add file1} \\
-\texttt{\$ git commit -m "Added third line to file1"}\\
-\texttt{\$ git checkout newbranch}\\
-\texttt{\$ echo "Another line" >\;\!\!> file1 \&\& git add file1} \\
-\texttt{\$ git commit -m "Added another line to file1"}\\
-\texttt{\$ git checkout master}\\
-\texttt{\$ git merge newbranch}\\
-\texttt{\$ git status}
-\medskip
+\begin{enumerate}
+\item \texttt{\$ git checkout master}\\
+\item \texttt{\$ echo "Third line" >\;\!\!> file1 \&\& git add file1} \\
+\item \texttt{\$ git commit -m "Added third line to file1"}\\
+\item \texttt{\$ git checkout newbranch}\\
+\item \texttt{\$ echo "Another line" >\;\!\!> file1 \&\& git add file1} \\
+\item \texttt{\$ git commit -m "Added another line to file1"}\\
+\item \texttt{\$ git checkout master}\\
+\item \texttt{\$ git merge newbranch}\\
+\item \texttt{\$ git status}
+\end{enumerate}
 
 This causes a conflict because different text occupies the same position for the same file.
 \end{block}
@@ -777,14 +779,15 @@ We can create as many copies as we want, though.
 \framesubtitle{Pushing from another clone}
 
 \begin{block}{Let's create another clone and push from it}
-\texttt{\$ cd ..} \\
-\texttt{\$ git clone myproject.git myproject2} \\
-\texttt{\$ cd myproject2} \\
-\texttt{\$ ls} \\
-\texttt{\$ touch file2 \&\& git add file2} \\
-\texttt{\$ git commit -m "Created file2"} \\
-\texttt{\$ git push}
-
+\begin{enumerate}
+\item \texttt{\$ cd ..}
+\item \texttt{\$ git clone myproject.git myproject2}
+\item \texttt{\$ cd myproject2}
+\item \texttt{\$ ls}
+\item \texttt{\$ touch file2 \&\& git add file2}
+\item \texttt{\$ git commit -m "Created file2"}
+\item \texttt{\$ git push}
+\end{enumerate}
 \begin{itemize}
 \item Here the clone includes the content of the remote as pushed by the first clone
 \item We do not need to push the master branch, since it already exists on the remote
@@ -815,14 +818,16 @@ We can create as many copies as we want, though.
 \framesubtitle{Pulling includes merging}
 
 \begin{block}{As with local merges, conflicts may arise}
-\texttt{\$ echo "1" >\;\!\!> file3 \&\& git add file3} \\
-\texttt{\$ git commit -m "Created file3 on first clone"} \\
-\texttt{\$ git push} \\
-\texttt{\$ cd ../myproject2} \\
-\texttt{\$ echo "2" >\;\!\!> file3 \&\& git add file3} \\
-\texttt{\$ git commit -m "Created file3 on second clone"} \\
-\texttt{\$ git push} \\
-\texttt{\$ git pull}
+\begin{enumerate}
+\item \texttt{\$ echo "1" >\;\!\!> file3 \&\& git add file3} 
+\item \texttt{\$ git commit -m "Created file3 on first clone"} 
+\item \texttt{\$ git push} 
+\item \texttt{\$ cd ../myproject2} 
+\item \texttt{\$ echo "2" >\;\!\!> file3 \&\& git add file3}
+\item \texttt{\$ git commit -m "Created file3 on second clone"}
+\item \texttt{\$ git push}
+\item \texttt{\$ git pull}
+\end{enumerate}
 
 \begin{itemize}
 \item Pushing is not allowed if your local copy is behind
@@ -855,12 +860,14 @@ We can create as many copies as we want, though.
 \framesubtitle{Pushing new branches}
 
 \begin{block}{New branches must be explicitly pushed}
-\texttt{\$ git branch newbranch} \\
-\texttt{\$ git branch -a} \\
-\texttt{\$ git push -u origin newbranch} \\
-\texttt{\$ cd ../myproject2} \\
-\texttt{\$ git pull} \\
-\texttt{\$ git branch -a}
+\begin{enumerate}
+\item \texttt{\$ git branch newbranch}
+\item \texttt{\$ git branch -a}
+\item \texttt{\$ git push -u origin newbranch}
+\item \texttt{\$ cd ../myproject2}
+\item \texttt{\$ git pull}
+\item \texttt{\$ git branch -a}
+\end{enumerate}
 
 \begin{itemize}
 \item The optional \texttt{-u} ("upstream") flag allows to configure \texttt{newbranch} to pull from \texttt{origin/newbranch} in the future
@@ -896,14 +903,16 @@ but it remains read-only since we are put in detached state.
 \texttt{\$ git push ---tags} \\
 
 \medskip
-while pulling them is done with a normal pull: \\
+while pulling them is done with a normal pull:
 
-\texttt{\$ git tag v1.0 -m "First stable version"} \\
-\texttt{\$ git tag} \\
-\texttt{\$ git push ---tags} \\
-\texttt{\$ cd ../myproject} \\
-\texttt{\$ git pull} \\
-\texttt{\$ git tag}
+\begin{enumerate}
+\item \texttt{\$ git tag v1.0 -m "First stable version"}
+\item \texttt{\$ git tag}
+\item \texttt{\$ git push ---tags}
+\item \texttt{\$ cd ../myproject}
+\item \texttt{\$ git pull}
+\item \texttt{\$ git tag}
+\end{enumerate}
 \end{block}
 
 \end{frame}
@@ -919,15 +928,17 @@ It addresses the case of external dependencies that come from another repository
 \end{block}
 \pause
 
-\begin{block}{Let's create a new remote repository with some commits}
-\texttt{\$ cd ..} \\
-\texttt{\$ mkdir mydependency.git \&\& cd mydependency.git} \\
-\texttt{\$ git init ---bare} \\
-\texttt{\$ cd ..} \\
-\texttt{\$ git clone mydependency.git \&\& cd mydependency} \\
-\texttt{\$ touch file1 \&\& git add file1} \\
-\texttt{\$ git commit -m "Initial commit"} \\
-\texttt{\$ git push origin master}
+\begin{block}{Let's create a new remote repo with some commits}
+\begin{enumerate}
+\item \texttt{\$ cd ..}
+\item \texttt{\$ mkdir mydependency.git \&\& cd mydependency.git}
+\item \texttt{\$ git init ---bare}
+\item \texttt{\$ cd ..}
+\item \texttt{\$ git clone mydependency.git \&\& cd mydependency}
+\item \texttt{\$ touch file1 \&\& git add file1}
+\item \texttt{\$ git commit -m "Initial commit"}
+\item \texttt{\$ git push origin master}
+\end{enumerate}
 \end{block}
 
 \end{frame}
@@ -937,12 +948,13 @@ It addresses the case of external dependencies that come from another repository
 \framesubtitle{Add the submodule (on \texttt{master})}
 
 \begin{block}{The directory of a submodule is treated differently}
-\texttt{\$ cd ../myproject} \\
-\texttt{\$ git checkout master} \\
-\texttt{\$ git submodule add ../mydependency.git} \\
-\texttt{\$ cd mydependency \&\& git status} \\
-\texttt{\$ cd .. \&\& git status}
-\medskip
+\begin{enumerate}
+\item \texttt{\$ cd ../myproject}
+\item \texttt{\$ git checkout master}
+\item \texttt{\$ git submodule add ../mydependency.git}
+\item \texttt{\$ cd mydependency \&\& git status}
+\item \texttt{\$ cd .. \&\& git status}
+\end{enumerate}
 \begin{itemize}
 \item The \texttt{.gitmodules} file holds the configuration of modules within the repository
 \item In practice, only the changes to the submodule directory are tracked
@@ -955,15 +967,15 @@ It addresses the case of external dependencies that come from another repository
 \framesubtitle{Push and pull a submodule}
 
 \begin{block}{There is a dedicated mechanism for pulling}
-\texttt{\$ git commit -m "Added dependency submodule"} \\
-\texttt{\$ git push} \\
-\texttt{\$ cd ../myproject2} \\
-\texttt{\$ git checkout master} \\
-\texttt{\$ git pull} \\
-\texttt{\$ git submodule init} \\
-\texttt{\$ git submodule update}
-
-\medskip
+\begin{enumerate}
+\item \texttt{\$ git commit -m "Added dependency submodule"}
+\item \texttt{\$ git push}
+\item \texttt{\$ cd ../myproject2}
+\item \texttt{\$ git checkout master}
+\item \texttt{\$ git pull}
+\item \texttt{\$ git submodule init}
+\item \texttt{\$ git submodule update}
+\end{enumerate}
 where the \texttt{init} operation is only needed if a new submodule is present in the \texttt{.gitmodules} file.
 \begin{itemize}
 \item The branches of the two clones must be the same, since \texttt{.gitmodules} is a regular versioned file
@@ -1087,19 +1099,21 @@ While to restore the branch and stop patching: \\
 \frametitle{Diffs and patches}
 \framesubtitle{An example}
 
-\texttt{\$ echo "Some text"  >\;\!\!> file4 \&\& git add file4} \\
-\texttt{\$ git commit -m "Added file4 on myproject2"} \\
-\texttt{\$ cp file4 file5 \&\& git add file5} \\
-\texttt{\$ git commit -m "Added file5"} \\
-\texttt{\$ git format-patch -2 ---stdout > file4and5.patch} \\
-\texttt{\$ cd ../myproject} \\
-\texttt{\$ echo "Some text"  >\;\!\!> file4 \&\& git add file4} \\
-\texttt{\$ git commit -m "Added file4 on myproject"} \\
-\texttt{\$ git am ../myproject2/file4and5.patch} \\
-\texttt{\$ git am ---skip} \\
-\texttt{\$ git log --oneline} \\
-
+\begin{block}{We purposefully create a conflict}
+\begin{enumerate}
+\item \texttt{\$ echo "Some text"  >\;\!\!> file4 \&\& git add file4} \\
+\item \texttt{\$ git commit -m "Added file4 on myproject2"} \\
+\item \texttt{\$ cp file4 file5 \&\& git add file5} \\
+\item \texttt{\$ git commit -m "Added file5"} \\
+\item \texttt{\$ git format-patch -2 ---stdout > file4and5.patch} \\
+\item \texttt{\$ cd ../myproject} \\
+\item \texttt{\$ echo "Some text"  >\;\!\!> file4 \&\& git add file4} \\
+\item \texttt{\$ git commit -m "Added file4 on myproject"} \\
+\item \texttt{\$ git am ../myproject2/file4and5.patch} \\
+\item \texttt{\$ git am ---skip}
+\end{enumerate}
 \medskip
 \pause
 Here we skipped, but we could have removed \texttt{file4} from \texttt{myproject2}, for example.
+\end{block}
 \end{frame}
