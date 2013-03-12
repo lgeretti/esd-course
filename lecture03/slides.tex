@@ -130,19 +130,20 @@ See also: \\  \url{http://en.wikipedia.org/wiki/Comparison_of_revision_control_s
 \frametitle{Git}
 \framesubtitle{Additional setup}
 
-\begin{block}{For sending patches via email (may become useful)}
-\texttt{\$ git config ---global sendemail.chainreplyto true} \\
-\texttt{\$ git config ---global sendemail.smtpserver posting.uniud.it} \\
-\texttt{\$ git config ---global sendemail.smtpserverport 587} \\
-\texttt{\$ git config ---global sendemail.smtpencryption tls} \\
-\texttt{\$ git config ---global sendemail.smtpuser myuser} \\
-\texttt{\$ git config ---global sendemail.smtppass mypass}
+\begin{block}{For setting specific tools instead of the defaults (explained later)}
+\texttt{\$ git config ---global core.editor vim} \\
+\texttt{\$ git config ---global diff.tool vimdiff}  \\
+\texttt{\$ git config ---global merge.tool vimdiff}
 \end{block}
 
 \pause
 \begin{block}{Add some aliases for commands (optional)}
 \texttt{\$ git config ---global alias.ci commit} \\
 \texttt{\$ git config ---global alias.st status} \\
+\texttt{\$ git config ---global alias.co checkout} \\
+\texttt{\$ git config ---global alias.br branch} \\
+\texttt{\$ git config ---global alias.cl clone} \\
+\texttt{\$ git config ---global alias.log1 log ---oneline} \\
 etc.
 \end{block}
 \end{frame}
@@ -270,7 +271,7 @@ will restore the file as it was at the latest commit. Will not work until we hav
 \framesubtitle{Performing the commit}
 
 \begin{block}{Commit the changes in the index and check the status}
-\texttt{\$ git commit -m "Significant message of your choice"}
+\texttt{\$ git commit -m "Significant message of your choice"} \\
 \texttt{\$ git status}
 
 \medskip
@@ -304,7 +305,7 @@ otherwise identifying commits becomes difficult.
 \texttt{\$ git commit -m "Modified file1 and created file2 and mydir"} 
 
 \medskip
-Note that you can add as many files as you want to the stage area. However, directories are not tracked: only files, along with their paths.
+Note that you can add as many files as you want to the stage area. However, directories are not tracked (you need to add files within \texttt{mydir}).
 \end{block}
 
 \end{frame}
@@ -314,24 +315,18 @@ Note that you can add as many files as you want to the stage area. However, dire
 \framesubtitle{Checking the log}
 
 \begin{block}{Git has plenty of ways to show the history of previous commits}
-The quickest: \\
-\texttt{\$ git log}
+\begin{tabular}{ll}
+\texttt{\$ git log} & the quickest \\
+\texttt{\$ git log ---oneline} & the most compact \\
+\texttt{\$ git log -n} & only the latest \texttt{n} commits \\
+\texttt{\$ git log <file>} & the commits related to a file \\
+\texttt{\$ git log ---graph} & the commit graph \\
+\texttt{\$ git log ---decorate} & show branch and tag names \\
+\texttt{\$ git show <commit>} & details on a commit
+\end{tabular}
 
 \medskip
-Many variants exist for more/less info, the most compact: \\
-\texttt{\$ git log ---oneline ---abbrev-commit} 
-
-\medskip
-To show only the latest \texttt{n} commits: \\
-\texttt{\$ git log -n}
-
-\medskip
-To show details on a commit: \\
-\texttt{\$ git show <commit>}
-
-\medskip
-
-And many more...
+and many more. Flags can be combined.
 \end{block}
 \end{frame}
 
@@ -346,9 +341,9 @@ Tags are references used to provide names to specific commits : \\
 \medskip
 \begin{itemize}
 \item The name should be compact, like \texttt{working\_rtl}, or set as the release version, like \texttt{0.9.1-rc1}
-\item The message is optional but useful to have some descriptive text with \texttt{git show}
-\item Tags are listed using \texttt{git tag} with no arguments
-\item Tags are also shown with \texttt{git log ---oneline ---decorate}
+\item The message is optional but useful to have some descriptive text when using \texttt{git show}
+\item Tags are listed with \\
+\texttt{\$ git tag}
 \end{itemize}
 \end{block}
 \end{frame}
@@ -366,7 +361,7 @@ It opens an editor (\texttt{nano} on Linux) to modify the message: we
 \begin{enumerate}
 \item remove the "and mydir" part of the message,
 \item save with Ctrl+X,
-\item confirm with Y/y,
+\item confirm with Y or y,
 \item confirm the temporary file.
 \end{enumerate}
 Checking the log shows only the new commit. Precisely, the new commit is merged with the previous one. Your amendment can include modified files, new files, etc.: just add to the stage and amend.
@@ -389,6 +384,25 @@ with \\
 
 \medskip
 In the second case, the modification is already staged for commit. Otherwise, when many files are involved, adding missing files to the stage area becomes tedious.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Miscellaneous maintenance}
+\framesubtitle{Moving files}
+
+\begin{block}{Files have history: you should keep it}
+Instead of using: \\
+\texttt{\$ mv file1 file10} \\
+\texttt{\$ git rm file1 \&\& git add file10} \\
+You should use: \\
+\texttt{\$ git mv file1 file2}
+
+\medskip
+In the second case, the rename is already staged for commit. Also, if you commit and issue \\
+\texttt{\$ git log ---follow file10} \\
+you can see all the commits involving the current \texttt{file10}, even through renames.
 \end{block}
 
 \end{frame}
@@ -524,7 +538,7 @@ If such commit is the latest for the current branch, we can continue adding comm
 \item Commits cannot (normally) be inserted in the middle of the commit tree: only on the leaves.
 \end{itemize}
 If it is not, we are in the {\em detached} state: \\
-\texttt{\$ git checkout master$\sim$} \\
+\texttt{\$ git checkout master\textasciitilde{}} \\
 \texttt{\$ git branch}
 
 \medskip
@@ -721,9 +735,9 @@ They {\em push} their own changes to the remote, and {\em pull} from the remote 
 \texttt{\$ git clone myproject.git} 
 
 \begin{itemize}
+\item Cloning can be done from remote locations too, using for example the HTTP/HTTPS or SSH protocols
 \item The cloned directory is the same as the remote without the \texttt{.git} extension
 \item An explicit directory name can be added as second argument of the \texttt{git clone} command
-\item The name for the remote is by convention \texttt{origin}: it can be changed with the \texttt{---origin <name>} extra parameter
 \end{itemize}
 \end{block}
 
@@ -966,7 +980,6 @@ This way we must be explicit if we want to make changes to a dependency.
 
 \medskip
 \texttt{\$ cd ../myproject/mydependency} \\
-\texttt{\$ git checkout master} \\
 \texttt{\$ touch file2 \&\& git add file2} \\
 \texttt{\$ git commit -m "Added file2" \&\& git push} \\
 \texttt{\$ cd .. \&\& git status} \\
@@ -975,7 +988,8 @@ This way we must be explicit if we want to make changes to a dependency.
 where we see that the \texttt{mydependency} directory is recognized as having new commits.
 \begin{itemize}
 \item Commits and pushes on the submodule are handled separated from those on the parent repository
-\item Each commit on a dependency must be reflected by a commit on the parent repository
+\item Each commit on a dependency must be reflected by a commit on the parent repository: \\
+\texttt{\$ git commit -am "Updated mydep" \&\& git push} \\
 \end{itemize}
 \end{block}
 
@@ -999,9 +1013,93 @@ where we see that the \texttt{mydependency} directory is recognized as having ne
 \texttt{\$ git pull}
 
 \medskip
-but clearly is quicker if multiple dependencies are present
+but clearly is quicker if multiple dependencies are present.
 \end{block}
 
 \end{frame}
 
-% Add diffs and patches?
+\subsection{Diffs and patches}
+
+\begin{frame}
+\frametitle{Diffs and patches}
+\framesubtitle{What is a diff?}
+
+\begin{block}{A diff identifies differences between any two commits}
+For example, \\
+\texttt{\$ git diff master\textasciitilde{} master} \\
+
+\medskip
+Essentially, text addition/removal is identified, along with the interested line. The order of the two commits counts: the difference is of the second commit in respect to the first. 
+\end{block}
+
+\pause
+\begin{block}{Reading extensive diffs on multiple files is tedious}
+You can exploit a diff tool with \\
+\texttt{\$ git difftool master\textasciitilde{} master}
+
+\medskip
+which shows the diff for each file.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Diffs and patches}
+\framesubtitle{What is a patch}
+
+\begin{block}{A patch incorporates one or more diffs, and can be applied by another party}
+This is relevant if we want to submit changes to read-only repositories, as it normally happens for submodules.
+\end{block}
+\pause
+
+\begin{block}{How to create a patch file}
+The simplest way picks the \texttt{n} latest commits and creates a file \\
+\texttt{\$ git format-patch -<n> ---stdout > myfile.patch} \\
+\medskip
+Opening the file shows that the \texttt{n} patches are present, one for commit, formatted as a sequence of email messages, for convenience purposes. 
+Indeed, you could make git send patches via email.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Diffs and patches}
+\framesubtitle{How to apply a patch}
+
+\begin{block}{Applying a patch is very simple}
+On another clone where the patch file can be found at, e.g., \texttt{../mypatchfile.patch}, \\
+\texttt{\$ git am ../myfile.patch} \\
+which automatically creates corresponding commits for each patch in the file
+\end{block}
+\pause
+\begin{block}{Commits in a patch are applied sequentially}
+If one introduces conflicts, you must resolve them and issue \\
+\texttt{\$ git am ---resolved} \\
+or skip the patch with \\
+\texttt{\$ git am ---skip} \\
+While to restore the branch and stop patching: \\
+\texttt{\$ git am ---abort}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Diffs and patches}
+\framesubtitle{An example}
+
+\texttt{\$ echo "Some text"  >\;\!\!> file4 \&\& git add file4} \\
+\texttt{\$ git commit -m "Added file4 on myproject2"} \\
+\texttt{\$ cp file4 file5 \&\& git add file5} \\
+\texttt{\$ git commit -m "Added file5"} \\
+\texttt{\$ git format-patch -2 ---stdout > file4and5.patch} \\
+\texttt{\$ cd ../myproject} \\
+\texttt{\$ echo "Some text"  >\;\!\!> file4 \&\& git add file4} \\
+\texttt{\$ git commit -m "Added file4 on myproject"} \\
+\texttt{\$ git am ../myproject2/file4and5.patch} \\
+\texttt{\$ git am ---skip} \\
+\texttt{\$ git log --oneline} \\
+
+\medskip
+\pause
+Here we skipped, but we could have removed \texttt{file4} from \texttt{myproject2}, for example.
+\end{frame}
