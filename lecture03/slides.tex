@@ -392,15 +392,16 @@ In the second case, the modification is already staged for commit. Otherwise, wh
 \frametitle{Miscellaneous maintenance}
 \framesubtitle{Moving files}
 
-\begin{block}{Files have history: you should keep it}
+\begin{block}{Moving files should be done in git}
 Instead of using: \\
 \texttt{\$ mv file1 file10} \\
-\texttt{\$ git rm file1 \&\& git add file10} \\
-You should use: \\
+\texttt{\$ git rm file1} \\
+\texttt{\$ git add file10} \\
+It is quicker to use: \\
 \texttt{\$ git mv file1 file10}
 
 \medskip
-In the second case, the rename is already staged for commit. Also, if you commit and issue \\
+In either case, Git recognizes that a rename has been performed. If you commit and issue \\
 \texttt{\$ git log ---follow file10} \\
 you can see all the commits involving the current \texttt{file10}, even through renames.
 \end{block}
@@ -425,7 +426,7 @@ you can see all the commits involving the current \texttt{file10}, even through 
 \begin{itemize}
 \item All modified tracked files can also be dropped with \\
 \texttt{\$ git reset ---hard}
-\item Untracked files can all be removed with \\
+\item Untracked files (including subdirs) can all be removed with \\
 \texttt{\$ git clean -fd}
 \end{itemize}
 Attention: these commands are destructive!
