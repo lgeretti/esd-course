@@ -1,0 +1,147 @@
+\section{Introduction}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{What is build and test automation?}
+
+\begin{block}{Give one simple command and all is done}
+\begin{itemize}
+\item Reduces development time considerably
+\item Is portable on different machines
+\item Encourages frequent builds and tests, thus identifying issues early
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{How does CMake help?}
+
+\begin{itemize}
+\item It summarizes the build and testing configuration in specific text files
+\item It handles cleaning, building, testing and installing with simple commands
+\item It is portable on a wide range of operating systems
+\item It can generate project files for several IDEs (notably, it integrates with KDevelop)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{The tutorial}
+
+\begin{block}{We will follow a tutorial hosted on BitBucket}
+\begin{itemize}
+\item Clone \url{https://bitbucket.org/uniud_esd/cmake_tutorial}
+\item Start from the first commit and follow each commit
+\item We will cover the following topics:
+\begin{enumerate}
+\item build sources into an executable
+\item organize source folders
+\item add a library
+\item add a dependency 
+\item add a test
+\end{enumerate}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\section{Tutorial}
+
+\subsection{Build}
+
+\begin{frame}[fragile]
+\frametitle{Build}
+\framesubtitle{A basic configuration}
+
+Configuration is all within a \texttt{CMakeLists.txt} file. Minimum content:
+
+\begin{verbatim}
+add_executable (execname sourcefile1 sourcefile2)
+\end{verbatim}
+  
+\begin{block}{Can't do less than the following:}
+\begin{itemize}
+\item Create a directory with a \texttt{CMakeLists.txt} file
+\item In such file, choose the executable name and the list of source files to build
+\end{itemize}
+Comments in \texttt{CMakeLists.txt} files start with \texttt{\#}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Build}
+\framesubtitle{How to build}
+
+\begin{block}{Configure and build (Linux)}
+\begin{enumerate}
+\item \texttt{\$ cmake .} 
+\item \texttt{\$ make}
+\end{enumerate}
+The first command generates a Makefile, and the second uses it to build the executable. As long as \texttt{CMakeLists.txt} does not change, from now on you only need to {\em make}.
+\end{block}
+\pause
+\begin{block}{Clean build files}
+\begin{enumerate}
+\item \texttt{\$ make clean}
+\end{enumerate}
+This still leaves some files around, including \texttt{Makefile}: these are the files needed to make.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Organize}
+\framesubtitle{Keep things tidy}
+
+\begin{block}{Do not configure CMake on the root directory}
+\begin{enumerate}
+\item \texttt{\$ rm -Rf !(tutorial.c|CMakeLists.txt)}
+\item \texttt{\$ mkdir build \&\& cd build}
+\item \texttt{\$ cmake ..}
+\item \texttt{\$ make}
+\end{enumerate}
+Leave the two files and configure from a build directory of your choice. Then you can make from there.
+\end{block}
+\pause
+\begin{block}{Add a .gitignore file}
+From the root directory of the project, create the file with only the directory \texttt{build} on one line.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Organize}
+\framesubtitle{Add a linked source file}
+
+\begin{block}{Add the new .c source within \texttt{CMakeLists.txt}}
+The corresponding .h file is not compiled separately, but only included, hence it is not considered.
+\end{block}
+\begin{block}{\texttt{make} builds only what changes}
+You can \texttt{touch} each of the three source files to see what happens when making.
+\end{block}
+
+\end{frame}
+
+\subsection{Organize}
+
+\begin{frame}
+\frametitle{Organize}
+\framesubtitle{Keep sources separated}
+
+\begin{block}{At least split .h files and .c files}
+\begin{itemize}
+\item The header directory is commonly called \texttt{include}, the source directory \texttt{src}
+\item Header directory must be added using the \texttt{include\_directories} command
+\item Source files can be simply updated with their path in the \texttt{add\_executable} command
+\item We also added a \\
+\texttt{cmake\_minimum\_required (VERSION 2.6)} \\
+
+command to avoid a warning.
+
+\end{itemize}
+\end{block}
+
+\end{frame}
