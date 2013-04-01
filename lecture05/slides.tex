@@ -20,9 +20,21 @@
 
 \begin{itemize}
 \item It summarizes the build and testing configuration in specific text files
-\item It handles cleaning, building, testing and installing with simple commands
+\item It handles cleaning, building, testing, packaging and installing with simple commands
 \item It is portable on a wide range of operating systems
 \item It can generate project files for several IDEs (notably, it integrates with KDevelop)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{How CMake works}
+
+\begin{itemize}
+\item It holds the configuration within \texttt{CMakeLists.txt} files
+\item Convention-over-configuration: anything not explicitly configured takes reasonable defaults
+\item The configuration file is the real portable file: before building, it is preprocessed on a machine to generate the files that actually allow building (e.g., Makefiles)
 \end{itemize}
 
 \end{frame}
@@ -34,16 +46,19 @@
 \begin{block}{We will follow a tutorial hosted on BitBucket}
 \begin{itemize}
 \item Clone \url{https://bitbucket.org/uniud_esd/cmake_tutorial}
-\item Start from the first commit and follow each commit
-\item We will cover the following topics:
+\item Start from the first commit and follow each commit (using the reverse notation of Git)
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{We will cover the following topics:}
 \begin{enumerate}
 \item build sources into an executable
 \item organize source folders
 \item add a library
-\item add a dependency 
 \item add a test
+\item add a dependency 
+\item import in an IDE
 \end{enumerate}
-\end{itemize}
 \end{block}
 \end{frame}
 
@@ -58,7 +73,7 @@
 Configuration is all within a \texttt{CMakeLists.txt} file. Minimum content:
 
 \begin{verbatim}
-add_executable (execname sourcefile1 sourcefile2)
+add_executable (execname srcfile1 srcfile2 ..)
 \end{verbatim}
   
 \begin{block}{Can't do less than the following:}
@@ -92,6 +107,8 @@ This still leaves some files around, including \texttt{Makefile}: these are the 
 
 \end{frame}
 
+\subsection{Organize}
+
 \begin{frame}
 \frametitle{Organize}
 \framesubtitle{Keep things tidy}
@@ -103,7 +120,7 @@ This still leaves some files around, including \texttt{Makefile}: these are the 
 \item \texttt{\$ cmake ..}
 \item \texttt{\$ make}
 \end{enumerate}
-Leave the two files and configure from a build directory of your choice. Then you can make from there.
+Leave the two files and configure from a build directory of your choice. Then you can \texttt{make} from there, or \\ \texttt{\$ rm -Rf *} \\ to remove CMake outputs from the build directory.
 \end{block}
 \pause
 \begin{block}{Add a .gitignore file}
@@ -125,8 +142,6 @@ You can \texttt{touch} each of the three source files to see what happens when m
 
 \end{frame}
 
-\subsection{Organize}
-
 \begin{frame}
 \frametitle{Organize}
 \framesubtitle{Keep sources separated}
@@ -136,12 +151,233 @@ You can \texttt{touch} each of the three source files to see what happens when m
 \item The header directory is commonly called \texttt{include}, the source directory \texttt{src}
 \item Header directory must be added using the \texttt{include\_directories} command
 \item Source files can be simply updated with their path in the \texttt{add\_executable} command
-\item We also added a \\
+\item We also introduced a \\
 \texttt{cmake\_minimum\_required (VERSION 2.6)} \\
 
 command to avoid a warning.
-
 \end{itemize}
 \end{block}
 
 \end{frame}
+
+\subsection{Libraries}
+
+\begin{frame}
+\frametitle{Libraries}
+\framesubtitle{Put your function into a library}
+
+\begin{block}{Two new commands and a modified one are needed:}
+\begin{enumerate}
+\item \texttt{add\_library (salut "src/salutation.c")}
+\item \texttt{add\_executable (tutorial src/tutorial.c)}
+\item \texttt{target\_link\_libraries (tutorial salut)}
+\end{enumerate}
+The first one creates a standalone library called \texttt{salut}, the second one neglects the sources used in the library, and the third one explains that the executable requires that library.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Libraries}
+\framesubtitle{Other libraries}
+
+\begin{block}{Multiple libraries can be linked to an executable}
+Only remember that \texttt{target\_link\_libraries} must follow both the command that adds the executable and the commands that add the libraries.
+\end{block}
+
+\begin{block}{External libraries (e.g., \texttt{pthread}) can be linked too}
+Beware of portability on different operating systems, though.
+\end{block}
+
+\end{frame}
+
+\subsection{Testing}
+
+\begin{frame}
+\frametitle{Testing}
+\framesubtitle{Approach}
+
+\begin{block}{How to test your functionality}
+\begin{enumerate}
+\item Functionalities are kept within libraries
+\item Tests are runs of executables
+\end{enumerate}
+This is similar to the approach in VHDL using testbenches.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing}
+\framesubtitle{Preparation}
+
+\begin{block}{Let's keep things separated}
+\begin{itemize}
+\item We move \texttt{tutorial.c} into a \texttt{test/} directory, renaming it \texttt{test\_salut.c}
+\item We change the executable as \\ \texttt{add\_executable (test\_salut test/test\_salut.c)}
+\end{itemize}
+Summarizing, we leave the \texttt{src/} directory for library sources and the \texttt{include/} directory for the headers that users of the library would need.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing}
+\framesubtitle{Adding tests}
+
+\begin{block}{Enable testing}
+Below the executables, insert \\
+\texttt{enable\_testing ()}
+\end{block}
+
+\begin{block}{Add one test}
+\texttt{add\_test (CompleteWithOneArgument test\_salut you)} 
+
+\medskip
+
+This adds a test for \texttt{test\_salut} arbitrarily called \texttt{CompleteWithOneArgument} and an argument \texttt{you}.
+\begin{itemize}
+\item The executable will run with the arguments you give it
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing}
+\framesubtitle{Running tests}
+
+\texttt{\$ make test}
+
+\bigskip
+
+\begin{block}{Tests by default pass if}
+\begin{enumerate}
+\item The executable is found
+\item No exception is thrown during execution
+\item The executable returns zero
+\end{enumerate}
+This also implies that you must \texttt{make} executables before running any test that uses them!
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Testing}
+\framesubtitle{Tests on regular expressions}
+
+\begin{block}{You can add as many tests as you like}
+{\scriptsize
+\begin{verbatim}
+add_test (RightOutput test_salut me)
+add_test (WrongOutput test_salut Name Surname)
+
+set_tests_properties 
+  (RightOutput PROPERTIES PASS_REGULAR_EXPRESSION "Hello, me!")
+set_tests_properties 
+  (WrongOutput PROPERTIES FAIL_REGULAR_EXPRESSION
+    "Hello, Name Surname")
+\end{verbatim}
+}
+Properties allow to check against text written on the standard output. See the following for POSIX regex syntax: \url{http://en.wikipedia.org/wiki/Regular_expression}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Testing}
+\framesubtitle{Multiple expressions}
+
+\begin{block}{You can in general provide multiple expressions}
+{\scriptsize
+\begin{verbatim}
+set (passRegex "Ok" "Passed")
+set (failRegex "Failed" "Error")
+
+set_tests_properties 
+  (myTest PROPERTIES PASS_REGULAR_EXPRESSION "$(passRegex)")
+set_tests_properties 
+  (myOtherTest PROPERTIES FAIL_REGULAR_EXPRESSION "$(failRegex)")
+\end{verbatim}
+}
+The first test will pass if at least one of the expressions matches, while the second will pass if none of the expressions match.
+\end{block}
+
+\end{frame}
+
+\subsection{Dependencies}
+
+\begin{frame}
+\frametitle{Dependencies}
+\framesubtitle{How to add a dependency}
+
+\begin{block}{Add the desired repo as a submodule}
+\begin{enumerate}
+\item {\scriptsize \texttt{\$ git submodule add git@bitbucket.org:uniud\_esd/cmake\_tutorial\_sub reverse} }
+\item {\scriptsize \texttt{\$ git ci -m "Added submodule to the project"}}
+\end{enumerate}
+To see the content on the tutorial repo, \texttt{git submodule init} and \texttt{git submodule update} after checkout.
+\end{block}
+\pause
+\begin{block}{Add a build subdirectory to \texttt{CMakeLists.txt}}
+\begin{enumerate}
+\item \texttt{add\_subdirectory ("reverse")}
+\end{enumerate}
+This allows to build and test everything together.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dependencies}
+\framesubtitle{How to exploit a dependency}
+
+\begin{block}{Change \texttt{test\_salut.c} to use it and have the following:}
+\begin{enumerate}
+\item {\scriptsize \texttt{include\_directories ("include" "reverse/include")}}
+\item {\scriptsize \texttt{target\_link\_libraries (test\_salut salut reverse)}}
+\end{enumerate}
+The first one adds a search path for the headers of the dependency, while the second one links the corresponding library.
+\begin{itemize}
+\item Note that the first {\em reverse} refers to the directory, while the second one to the library name set in the submodule project
+\item You also need to adapt the CMake tests to the new \texttt{test\_salut.c}.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\subsection{Import in an IDE}
+
+\begin{frame}
+\frametitle{Import in an IDE}
+\framesubtitle{Eclipse, Visual Studio, etc.}
+
+\begin{block}{First you have to create the project files}
+Generic command:
+
+\medskip
+
+\texttt{cmake -G "<generator>"}
+
+\medskip
+
+where the available generators are listed when issuing \texttt{cmake}.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Import in an IDE}
+\framesubtitle{KDevelop4}
+
+\begin{block}{It allows you to directly open a \texttt{CMakeLists.txt}}
+\begin{enumerate}
+\item Go to \texttt{Open/Import Project}
+\item Select the interested \texttt{CMakeLists.txt} file
+\item Accept the default configuration it proposes to you
+\end{enumerate}
+KDevelop4 accounts for subdirectories and responds to changes in the \texttt{CMakeLists.txt} file.
+\end{block}
+
+\end{frame}
+
