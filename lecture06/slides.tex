@@ -58,8 +58,9 @@ Our component-based design makes heavy use of polymorphism.
 \begin{block}{How to follow the steps of this lecture}
 Clone the following repository and start from the beginning:
 \url{git@bitbucket.org:uniud_esd/cpp_tutorial.git}
-\medskip 
 
+\medskip 
+\pause
 It can be built with CMake, and it does have rudimentary tests to check for failures.
 \end{block}
 \pause
@@ -67,6 +68,7 @@ It can be built with CMake, and it does have rudimentary tests to check for fail
 Available online:
 \begin{itemize}
 \item \url{http://www.cplusplus.com/files/tutorial.pdf} \\ (brief tutorial)
+\item \url{http://www.cplusplus.com/reference/} \\ (standard library)
 \item \url{http://www.mindview.net/Books/DownloadSites} \\ Thinking in C++ (complete book)
 \end{itemize}
 \end{block}
@@ -121,26 +123,24 @@ Methods and fields that do not need to be freely accessed should be set private:
 They see everything of the base class if set as public, and also everything set as {\em protected}. Protected fields and methods are private to the rest of the world.
 \end{block}
 \pause
-\begin{block}{Subclasses can override a method, if set as {\em virtual} on the base class}
-In this way, you can provide a generic implementation and rewrite it for specific cases.
+\begin{block}{Inheritance may be multiple}
+This is important if we want a class to implement several interfaces.
 \end{block}
+
 \end{frame}
 
 \subsection{Polymorphism}
 
 \begin{frame}
 \frametitle{Polymorphism}
-\framesubtitle{Deal with superclass variables}
+\framesubtitle{Change view based on the pointer, change behavior based on the object}
 
-\begin{block}{How do we exploit the \texttt{Dog} and \texttt{Cat} classes in the test?}
-The trick: we can assign an object of a class to a variable of its parent class.
+\begin{block}{You can assign an object pointer to a pointer of its parent class}
+In this way, you can "see" an object on a more generic level ("upcasting").
 \end{block}
 \pause
-\begin{block}{The implementation of \texttt{feelsAbout} is decided at runtime based on the actual object on which it is called}
-In this way, you can ignore the details of the implementation and focus on the available methods.
-\begin{itemize}
-\item You can also check if a superclass variable holds an object of a specific class
-\end{itemize}
+\begin{block}{You can redefine methods by setting them as \texttt{virtual} on the base class}
+When using upcasting, you will call the "version" of the method on the actual object.
 \end{block}
 
 \end{frame}
@@ -157,7 +157,7 @@ We can create an {\em abstract} class by making at least one method {\em pure vi
 \end{itemize}
 \end{block}
 \pause
-\begin{block}{An interfaces is an abstract class with all pure virtual methods}
+\begin{block}{An interface is an abstract class with all pure virtual methods}
 Nothing of its behavior is defined: only the {\em signatures} of its methods.
 \end{block}
 
@@ -203,12 +203,12 @@ If you want to default as public, use \texttt{struct} instead of \texttt{class}.
 \begin{block}{Visibility is declared in blocks (that can be repeated)}
 { \scriptsize
 \texttt{class MyClass \{ } \\
-\texttt{  // private visibility here } \\
-\texttt{  public: } \\
+\texttt{  // here we have private visibility until the next access keyword } \\
+\texttt{  public: // all public from now on }  \\ 
 \texttt{    ... } \\
-\texttt{  private: // again } \\
+\texttt{  private: // again all private from now on } \\
 \texttt{    ...} \\
-\texttt{  protected:} \\
+\texttt{  protected: // all protected from now on } \\
 \texttt{    ...} \\
 \texttt{\}; } 
 }
@@ -220,8 +220,8 @@ If you want to default as public, use \texttt{struct} instead of \texttt{class}.
 \frametitle{Class declaration}
 \framesubtitle{Passing by reference or by value}
 
-\begin{block}{To pass by reference is preferable when copying is expensive}
-Compare the following three:
+\begin{block}{When a copy is expensive, better to pass by reference}
+Compare the following three method signatures:
 \begin{itemize}
 \item \texttt{void setDirection(Vector vec); }
 \item \texttt{void setDirection(Vector* vec); }
@@ -272,6 +272,26 @@ Using \texttt{const} is not mandatory, but helps you to enforce encapsulation.
 
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Class declaration}
+\framesubtitle{The \texttt{static} keyword}
+
+\begin{block}{Static means the same for all objects}
+You access them with the class name and the double colon:
+\begin{verbatim}
+MyClass::myField;
+MyClass::myMethod();
+\end{verbatim}
+instead of an object. The field or method must be accessible from outside the class, obviously.
+For methods, it also means that the method definition cannot use any non-static field/method of the class. 
+\end{block}
+\pause
+\begin{block}{This is useful for constants or methods that belong to a context}
+For example, mathematic methods can be defined as static methods of a Math class, where $\pi$ is a static variable.
+\end{block}
+
+\end{frame}
+
 \subsection{Class definition}
 
 \begin{frame}[fragile]
@@ -295,25 +315,55 @@ double Complex::modulus() { ... }
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{Class definition}
-\framesubtitle{Constructors and destructor}
+\framesubtitle{Constructors}
 
 \begin{block}{A constructor is called to "configure" a new object}
 \begin{itemize}
 \item It has the name of the class and doesn't have a return type
 \item It sets up an object using one or more arguments
-\item If no constructor is defined, a "default" one is created
 \item Multiple constructors can be defined
+\item If no constructor is defined, a "default" one with no arguments is created
 \end{itemize}
 \end{block}
 \pause
+\begin{block}{You can initialize fields in the constructor definition}
+{\scriptsize
+\begin{verbatim}
+class MyClass {
+  int a;
+  double b;
+public:
+  MyClass(int a, double b) : a(a), b(b) { }
+};
+\end{verbatim}
+}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Class definition}
+\framesubtitle{Destructor}
+
 \begin{block}{A destructor is used to clean up resources}
 \begin{itemize}
 \item It has the name of the class with a tilde prefix, and doesn't have arguments or a return type
 \item Only one destructor can exist
-\item It needs to be explicitly defined only if dynamic memory is allocated for the object fields
 \end{itemize}
+\end{block}
+\pause
+\begin{block}{A destructor needs to be defined if dynamic memory must be freed}
+{\scriptsize
+\begin{verbatim}
+struct MyClass {
+  int a;
+  double* b;
+  MyClass(int a) : a(a), b(new double) { }
+  ~MyClass() { delete b; }
+};
+\end{verbatim}
+}
 \end{block}
 
 \end{frame}
@@ -363,16 +413,16 @@ Allocating objects is similar, but requires further care.
 \frametitle{Object lifecycle}
 \framesubtitle{Allocation: stack versus heap}
 
-\begin{block}{Compare the following:}
-\begin{itemize}
+\begin{block}{Compare the following two:}
+\begin{enumerate}
 \item \texttt{Number num(1.0); }
 \item \texttt{Number* num = new Number(1.0); }
-\end{itemize}
+\end{enumerate}
 Both call the same constructor, but
-\begin{itemize}
-\item The first object is allocated in the {\em stack}, hence the object is destroyed when the variable loses scope
-\item The second object is allocated in the {\em heap} (and the pointer in the stack), hence the object is not destroyed
-\end{itemize}
+\begin{enumerate}
+\item The object is allocated in the {\em stack}, hence the object is destroyed when the variable loses scope
+\item The object is allocated in the {\em heap} (and the pointer in the stack), hence the object is not destroyed
+\end{enumerate}
 Similarly to C pointers, we can "pass" an object in the heap by copying pointers to the object.
 \end{block}
 
@@ -383,16 +433,20 @@ Similarly to C pointers, we can "pass" an object in the heap by copying pointers
 \framesubtitle{Allocating an array}
 
 \begin{block}{Same as before:}
-\begin{itemize}
-\item \texttt{Number nums[2]; }
-\item \texttt{Number* nums = new Number[2]; }
-\end{itemize}
-where you must consider that constructors are still called. If no constructor with zero arguments exists, this does not even compile. In C++11, you can initialize with
-any constructor by using:
-\begin{itemize}
-\item \texttt{Number nums[2] \{ Number(1.0), Number(2.0) \}; }
-\item \texttt{Number* num = new Number[2] \{ Number(1.0), Number(2.0) \}; }
-\end{itemize}
+\begin{enumerate}
+\item {\scriptsize \texttt{Number nums[2]; }}
+\item {\scriptsize \texttt{Number* nums = new Number[2]; }}
+\end{enumerate}
+where you must consider that constructors are still called: {\em an object variable is always initialized}. 
+
+If no constructor with zero arguments exists, this does not even compile. 
+\end{block}
+\begin{block}{You can initialize the array using any constructor:}
+\begin{enumerate}
+\item {\scriptsize \texttt{Number nums[2] \{ Number(1.0), Number(2.0) \}; } }
+\item {\scriptsize \texttt{Number* num = new Number[2] \{ Number(1.0), Number(2.0) \}; } }
+\end{enumerate}
+If you instead need to assign the objects later, use an array of {\em pointers} to objects.
 \end{block}
 
 \end{frame}
@@ -420,7 +474,7 @@ The destructor is called automatically, so there is little ground for errors. We
 \framesubtitle{Derive from a base class}
 
 \begin{block}{You can derive as public or private/protected}
-Defaults to private for a class, public for a struct. You use public if you want to create a "is-a" relationship.
+Defaults to private for a class, public for a struct. You need to use public to create a "is-a" relationship.
 
 {\scriptsize 
 \texttt{class Derived : public Base \{ ... \}; }
@@ -447,27 +501,49 @@ Remember that constructors are not inherited.
 \end{block}
 \end{frame}
 
+\subsection{Polymorphism}
+
 \begin{frame}[fragile]
-\frametitle{Inheritance}
+\frametitle{Polymorphism}
 \framesubtitle{Virtual methods}
 
-\begin{block}{By marking with \texttt{virtual}, you allow subclasses to rewrite the method}
+\begin{block}{By marking with \texttt{virtual}, you allow subclasses to {\em override} the method}
 This is important if a subclass can be more specific.
 
 {\scriptsize 
-\texttt{virtual string getDescriptionMessage() const; }
+\texttt{virtual void printDescriptionMessage() const; }
 }
 \end{block}
 \pause
-\begin{block}{How to call the method on the base class?}
+\begin{block}{You can assign an object to a variable related to one of its superclasses}
+{\scriptsize 
+\begin{verbatim}
+Base* base = new Base();
+Derived* derived = new Derived();
+Base* upcastToBase = derived;
+base.printDescriptionMessage();
+derived.printDescriptionMessage();
+upcastToBase.printDescriptionMessage();
+\end{verbatim}
+}
+Here both the second and third calls use the overridden version, i.e., the version on the actual object.
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Polymorphism}
+\framesubtitle{Calling overridden methods}
+
+\begin{block}{How to call the base method within the derived class?}
 Just use the name of the base class with the two colons:
 {\scriptsize 
 \begin{verbatim}
 class Derived : public Base {
   ...
   
-  void doSomething() {
-    Base::doSomething();
+  void printDescriptionMessage() {
+    Base::printDescriptionMessage();
     ...
   }
 };
@@ -475,13 +551,15 @@ class Derived : public Base {
 }
 Happens sometimes, especially when we want to {\em extend} rather than {\em substitute} the behavior of a method.
 \end{block}
+
+
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Inheritance}
+\frametitle{Polymorphism}
 \framesubtitle{Pure virtual methods}
 
-\begin{block}{What if you do not want to define the method in the base class?}
+\begin{block}{What if you do not even want to define the method in the base class?}
 Use a pure virtual function:
 
 {\scriptsize 
@@ -490,7 +568,7 @@ Use a pure virtual function:
 \end{block}
 \pause
 \begin{block}{A pure virtual method makes a class abstract}
-You cannot create objects for it, but you can assign objects of any of its subclasses to a pointer variable of its type:
+You cannot create an object (or an array of objects) for it, but you can still assign a pointer to an object of a subclass:
 
 {\scriptsize 
 \begin{verbatim}
@@ -500,15 +578,14 @@ Animal* myAnimal;
 myAnimal = myDog;
 \end{verbatim}
 }
-The only "drawback" is that you can now see only the functionality of an \texttt{Animal}.
+
 \end{block}
 
 \end{frame}
 
-
 \begin{frame}[fragile]
-\frametitle{Inheritance}
-\framesubtitle{An example of abstraction}
+\frametitle{Polymorphism}
+\framesubtitle{An example of abstracted behavior}
 {\scriptsize 
 \begin{verbatim}
 struct Shape {
@@ -524,16 +601,35 @@ struct Square : Shape {
 };
 \end{verbatim}
 }
-And:
+With:
 {\scriptsize 
 \begin{verbatim}
-std::vector<Shape*> shapes;
-shapes.push_back(new Triangle());
-shapes.push_back(new Square());
-
-int sides[shapes.size()];  
-for (int i=0; i<shapes.size(); i++)
+Shape** shapes = new Shape*[2];
+shapes[0] = new Triangle();
+shapes[1] = new Square();
+  
+int sides[2];
+for (int i=0;i<2;i++)
   sides[i] = shapes[i]->getNumSides();
 \end{verbatim}
 }
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Polymorphism}
+\framesubtitle{Pure virtual methods still {\em can} be defined}
+
+\begin{block}{If a definition exists, then what's the difference with a non-pure virtual function?}
+Let's consider three types of methods in the base class (B: base class, D: derived class):
+\begin{enumerate}
+\item Virtual: B version is callable within D implementation, D {\em may not override} the method, and B may be non-abstract (i.e., B version could also be called on B objects);
+\pause
+\item Pure virtual: B version is not callable within D implementation, D {\em must implement} the method, and B is abstract;
+\pause
+\item Pure virtual and defined: B version is callable within D implementation, D {\em must override} the method, and B is abstract;
+\end{enumerate}
+\end{block}
+
+
+
 \end{frame}
