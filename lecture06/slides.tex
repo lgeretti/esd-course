@@ -138,6 +138,9 @@ The trick: we can assign an object of a class to a variable of its parent class.
 \pause
 \begin{block}{The implementation of \texttt{feelsAbout} is decided at runtime based on the actual object on which it is called}
 In this way, you can ignore the details of the implementation and focus on the available methods.
+\begin{itemize}
+\item You can also check if a superclass variable holds an object of a specific class
+\end{itemize}
 \end{block}
 
 \end{frame}
@@ -160,18 +163,147 @@ Nothing of its behavior is defined: only the {\em signatures} of its methods.
 
 \end{frame}
 
-\section{Tutorial}
+\section{In detail}
 
-\subsection{Object creation}
+\subsection{Class declaration}
+
+\begin{frame}[fragile]
+\frametitle{Class declaration}
+\framesubtitle{Declarations go to header files (.hpp)}
+
+\begin{block}{Prefer one header file per class, with no definitions}
+You name the fields, methods and operators, but you do not provide the definition (i.e., implementation) of methods and operators.
+\begin{itemize}
+\item In this way, how to interact with the class is separated from how the class behaves
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Minimal example}
+Remember to put a semicolon after the class declaration. This is in opposition to definitions, that do not require a semicolon.
+\begin{verbatim}
+class MyClass { };
+\end{verbatim}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Class declaration}
+\framesubtitle{Field/method/operator visibility}
+
+\begin{block}{Use the minimum access that works}
+\begin{itemize}
+\item \texttt{private}: (default) is visible only within this class
+\item \texttt{protected}: is visible within this class and any subclass
+\item \texttt{public}: is visible by anyone 
+\end{itemize}
+If you want to default as public, use \texttt{struct} instead of \texttt{class}.
+\end{block}
+\pause
+\begin{block}{Visibility is declared in blocks (that can be repeated)}
+{ \scriptsize
+\texttt{class MyClass \{ } \\
+\texttt{  // private visibility here } \\
+\texttt{  public: } \\
+\texttt{    ... } \\
+\texttt{  private: // again } \\
+\texttt{    ...} \\
+\texttt{  protected:} \\
+\texttt{    ...} \\
+\texttt{\}; } 
+}
+\end{block}
+
+\end{frame}
 
 \begin{frame}
-\frametitle{Object creation}
+\frametitle{Class declaration}
+\framesubtitle{Passing by reference or by value}
+
+\begin{block}{To pass by reference is preferable when copying is expensive}
+Compare the following three:
+\begin{itemize}
+\item \texttt{void setDirection(Vector vec); }
+\item \texttt{void setDirection(Vector* vec); }
+\item \texttt{void setDirection(Vector\& vec); }
+\end{itemize}
+The first creates a copy of the object within the function, the second creates a copy of the pointer within the function, the third passes the object to the function directly.
+\begin{itemize}
+\item The second solution is acceptable, but may introduce unnecessary pointers around.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Class declaration}
+\framesubtitle{Passing by reference or by value}
+
+\begin{block}{Passing by reference works also on return values}
+\begin{itemize}
+\item \texttt{Vector\& invert(Vector\& vec); }
+\end{itemize}
+Again, this saves creating a copy of the object.
+\begin{itemize}
+\item Beware of scope: objects on the stack must have scope outside the function! (more on this in the following)
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Class declaration}
+\framesubtitle{The \texttt{const} keyword}
+
+\begin{block}{Constness forces immutability}
+\begin{itemize}
+\item Use \texttt{const} on method/operators to say that they do not modify the state of the object:
+\begin{verbatim}
+double determinant() const;
+\end{verbatim}
+\item Use \texttt{const} on arguments and return types to say that they cannot be modified:
+\begin{verbatim}
+const Vector& getDirection();
+void setDirection(const Vector& dir);
+\end{verbatim}
+\end{itemize}
+Using \texttt{const} is not mandatory, but helps you to enforce encapsulation.
+\end{block}
+
+\end{frame}
+
+\subsection{Class definition}
+
+\begin{frame}[fragile]
+\frametitle{Class definition}
+\framesubtitle{Definitions go to source files (.cpp)}
+
+\begin{block}{Header files (.hpp preferably) should hold the class declaration}
+You name the fields, methods and operators, but you do not provide the definition (i.e., implementation) of methods and operators.
+\begin{itemize}
+\item In this way, how to interact with the class is separated from how the class works
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Source files (.cpp preferably) should be created for the definitions}
+A class method or operator name is prefixes by the class name and two colons, e.g.
+
+\begin{verbatim}
+double Complex::modulus() { ... }
+\end{verbatim}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Class definition}
 \framesubtitle{Constructors and destructor}
 
-\begin{block}{A constructor is called to configure an object}
+\begin{block}{A constructor is called to "configure" a new object}
 \begin{itemize}
 \item It has the name of the class and doesn't have a return type
 \item It sets up an object using one or more arguments
+\item If no constructor is defined, a "default" one is created
 \item Multiple constructors can be defined
 \end{itemize}
 \end{block}
@@ -186,8 +318,49 @@ Nothing of its behavior is defined: only the {\em signatures} of its methods.
 
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Class definition}
+\framesubtitle{The \texttt{this} keyword}
+
+\begin{block}{It is a pointer to the current object}
+\begin{itemize}
+\item It can be used only within method or operator definitions
+\item It usually allows to access fields when ambiguity between variables exists:
+\begin{verbatim}
+MyClass::MyClass(double myField) {
+  this->myField = myField;
+}
+\end{verbatim}
+\end{itemize}
+It is good practice to use \texttt{this} throughout, since it prevents certain variable scope errors.
+\end{block}
+
+\end{frame}
+
+\subsection{Object lifecycle}
+
+\begin{frame}[fragile]
+\frametitle{Object lifecycle}
+\framesubtitle{Variable allocation}
+
+\begin{block}{The \texttt{new} and \texttt{delete} keywords}
+Instead of using \texttt{malloc} and \texttt{free}:
+
+\begin{verbatim}
+double* myDouble = new double;
+double* myDoubleArray = new double[10];
+delete myDouble;
+delete[] myDoubleArray;
+\end{verbatim}
+Compared to C, you do not need to specify the size of the type when allocating.
+
+Allocating objects is similar, but requires further care.
+\end{block}
+
+\end{frame}
+
 \begin{frame}
-\frametitle{Object creation}
+\frametitle{Object lifecycle}
 \framesubtitle{Allocation: stack versus heap}
 
 \begin{block}{Compare the following:}
@@ -200,44 +373,167 @@ Both call the same constructor, but
 \item The first object is allocated in the {\em stack}, hence the object is destroyed when the variable loses scope
 \item The second object is allocated in the {\em heap} (and the pointer in the stack), hence the object is not destroyed
 \end{itemize}
-Similarly to C pointers, we can copy pointers that point to the same object in order to access an object in the heap.
+Similarly to C pointers, we can "pass" an object in the heap by copying pointers to the object.
 \end{block}
 
 \end{frame}
 
 \begin{frame}
-\frametitle{Object creation}
+\frametitle{Object lifecycle}
 \framesubtitle{Allocating an array}
 
 \begin{block}{Same as before:}
 \begin{itemize}
 \item \texttt{Number nums[2]; }
-\item \texttt{Number* num = new Number[2]; }
+\item \texttt{Number* nums = new Number[2]; }
 \end{itemize}
-where you must consider that constructors are called. If no constructor with zero arguments exists, this does not even compile. In C++11, you can initialize with
+where you must consider that constructors are still called. If no constructor with zero arguments exists, this does not even compile. In C++11, you can initialize with
 any constructor by using:
 \begin{itemize}
 \item \texttt{Number nums[2] \{ Number(1.0), Number(2.0) \}; }
 \item \texttt{Number* num = new Number[2] \{ Number(1.0), Number(2.0) \}; }
 \end{itemize}
-Note: prefer \texttt{std::array} objects to the plain array: more flexible.
 \end{block}
 
 \end{frame}
 
 \begin{frame}
-\frametitle{Object creation}
+\frametitle{Object lifecycle}
 \framesubtitle{Cleaning up}
 
 \begin{block}{Stack allocation should be preferred}
 The destructor is called automatically, so there is little ground for errors. We only need to be clear about the lifetime of the object.
 \end{block}
 \pause
-\begin{block}{When heap allocation is necessary, clean up with {\em delete}}
+\begin{block}{When heap allocation is necessary, clean up}
 \begin{itemize}
 \item \texttt{delete variableName;} \,\,\, if it is a single variable
 \item \texttt{delete[] variableName;} \,\,\, if it is an array
 \end{itemize}
-This applies to non-class types too.
 \end{block}
+\end{frame}
+
+\subsection{Inheritance}
+
+\begin{frame}
+\frametitle{Inheritance}
+\framesubtitle{Derive from a base class}
+
+\begin{block}{You can derive as public or private/protected}
+Defaults to private for a class, public for a struct. You use public if you want to create a "is-a" relationship.
+
+{\scriptsize 
+\texttt{class Derived : public Base \{ ... \}; }
+}
+\end{block}
+\pause
+\begin{block}{You can derive from multiple classes}
+The set of "functionality" you have is the union of the functionalities from each parent class.
+
+{\scriptsize 
+\texttt{class Derived2 : public BaseA, public BaseB \{ ... \}; }
+}
+\end{block}
+\pause
+\begin{block}{When defining a constructor, you can call the parent constructor}
+Remember that constructors are not inherited.
+
+\medskip
+
+{\scriptsize 
+\texttt{Derived::Derived(int a) : Base(a) \{ ... \} } \\
+\texttt{Derived2::Derived2(int x, int y) : BaseA(x), BaseB(y) \{ ... \} }
+}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Inheritance}
+\framesubtitle{Virtual methods}
+
+\begin{block}{By marking with \texttt{virtual}, you allow subclasses to rewrite the method}
+This is important if a subclass can be more specific.
+
+{\scriptsize 
+\texttt{virtual string getDescriptionMessage() const; }
+}
+\end{block}
+\pause
+\begin{block}{How to call the method on the base class?}
+Just use the name of the base class with the two colons:
+{\scriptsize 
+\begin{verbatim}
+class Derived : public Base {
+  ...
+  
+  void doSomething() {
+    Base::doSomething();
+    ...
+  }
+};
+\end{verbatim}
+}
+Happens sometimes, especially when we want to {\em extend} rather than {\em substitute} the behavior of a method.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Inheritance}
+\framesubtitle{Pure virtual methods}
+
+\begin{block}{What if you do not want to define the method in the base class?}
+Use a pure virtual function:
+
+{\scriptsize 
+\texttt{virtual int getNumSides() const = 0; }
+}
+\end{block}
+\pause
+\begin{block}{A pure virtual method makes a class abstract}
+You cannot create objects for it, but you can assign objects of any of its subclasses to a pointer variable of its type:
+
+{\scriptsize 
+\begin{verbatim}
+string dogString = "dog";
+Dog* myDog = new Dog(dogString,4);
+Animal* myAnimal;
+myAnimal = myDog;
+\end{verbatim}
+}
+The only "drawback" is that you can now see only the functionality of an \texttt{Animal}.
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inheritance}
+\framesubtitle{An example of abstraction}
+{\scriptsize 
+\begin{verbatim}
+struct Shape {
+  virtual int getNumSides() const = 0;
+};
+
+struct Triangle : Shape {
+  virtual int getNumSides() const { return 3; }
+};
+
+struct Square : Shape {
+  virtual int getNumSides() const { return 4; }
+};
+\end{verbatim}
+}
+And:
+{\scriptsize 
+\begin{verbatim}
+std::vector<Shape*> shapes;
+shapes.push_back(new Triangle());
+shapes.push_back(new Square());
+
+int sides[shapes.size()];  
+for (int i=0; i<shapes.size(); i++)
+  sides[i] = shapes[i]->getNumSides();
+\end{verbatim}
+}
 \end{frame}
