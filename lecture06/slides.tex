@@ -515,18 +515,17 @@ This is important if a subclass can be more specific.
 }
 \end{block}
 \pause
-\begin{block}{You can assign an object to a variable related to one of its superclasses}
+\begin{block}{You can assign an object to a variable related to one of its superclasses ("upcast")}
 {\scriptsize 
-\begin{verbatim}
-Base* base = new Base();
-Derived* derived = new Derived();
-Base* upcastToBase = derived;
-base.printDescriptionMessage();
-derived.printDescriptionMessage();
-upcastToBase.printDescriptionMessage();
-\end{verbatim}
+\texttt{Base* base = new Base(); } \\
+\texttt{Derived* derived = new Derived(); } \\
+\texttt{Base* upcastToBase = derived; } \\
+\texttt{base.printDescriptionMessage(); } \\
+\texttt{derived.printDescriptionMessage(); } \\
+\texttt{upcastToBase.printDescriptionMessage(); } \\
 }
-Here both the second and third calls use the overridden version, i.e., the version on the actual object.
+The last two call the overridden version, i.e., the one of the actual object. We say that 
+virtual methods operate on the {\em dynamic type}, not the {\em static type} given by the variable type.
 \end{block}
 
 \end{frame}
@@ -551,7 +550,10 @@ class Derived : public Base {
 }
 Happens sometimes, especially when we want to {\em extend} rather than {\em substitute} the behavior of a method.
 \end{block}
-
+\pause
+\begin{block}{Note how we did not mark the overridden method as virtual itself}
+We do it only if we want to allow classes derived from \texttt{Derived} to override it.
+\end{block}
 
 \end{frame}
 
@@ -630,6 +632,99 @@ Let's consider three types of methods in the base class (B: base class, D: deriv
 \end{enumerate}
 \end{block}
 
+\end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Polymorphism}
+\framesubtitle{Dynamic casting}
+
+\begin{block}{What if we want to "downcast"?}
+Downcasting means to recover a specific object from an abstracted pointer.
+We can use {\em dynamic casting}:
+
+{\scriptsize 
+\begin{verbatim}
+// Given a base_ptr of type Base*
+Derived1* der1_ptr = dynamic_cast<Derived1*>(base_ptr);
+Derived2* der1_ptr = dynamic_cast<Derived2*>(base_ptr);
+\end{verbatim}
+}
+This compiles if the casting is legal, i.e., the classes are derived from \texttt{Base}.
+\end{block}
+\begin{block}{Which cast succeeds depends on the dynamic type}
+By checking which pointer is not null (or equivalently, false), you get which dynamic type is the correct one and work with the right pointer.
+\end{block}
 
 \end{frame}
+
+\begin{frame}
+\frametitle{Polymorphism}
+\framesubtitle{Interfaces versus abstract classes}
+
+\begin{block}{What is the difference?}
+\begin{itemize}
+\item Interfaces only have pure virtual undefined methods, with no fields
+\item Abstract classes have at least one pure virtual method
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{When to use each?}
+\begin{itemize}
+\item Use interfaces wherever possible, especially if classes are exposed to users (i.e., if they are not "internal")
+\item Use abstract classes between interfaces and classes, if you have multiple derived classes with common fields/methods
+\end{itemize}
+This approach improves clarity for users of your library, and shields you from breaking the interfacing when you change some internal implementation detail.
+\end{block}
+
+\end{frame}
+
+\subsection{Extras}
+
+\begin{frame}[fragile]
+\frametitle{Extras}
+\framesubtitle{Template programming}
+
+\begin{block}{Templating provides methods that apply to multiple class}
+We do not explain how to write templates: it is only relevant because SystemC uses templated classes.
+\end{block}
+\pause
+\begin{block}{Example: templated class usage}
+\begin{verbatim}
+std::vector<MyClass*> vec;
+vec.push_back(new MyClass());
+\end{verbatim}
+
+Here adding items to a vector is the same whatever class is used, so the \texttt{std::vector} class is written with no regards to the objects it manipulates.
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Extras}
+\framesubtitle{Enumerations}
+
+\begin{block}{Enumerations are type-safe sets of values}
+Instead of using arbitrary strings or numbers, you can write down the exact possible values:
+
+{\scriptsize 
+\begin{verbatim}
+enum class Feeling { HATRED, INDIFFERENCE, FEAR, CURIOSITY};
+\end{verbatim}
+}
+\end{block}
+\pause
+\begin{block}{To create a variable and compare it:}
+
+{\scriptsize 
+\begin{verbatim}
+Feeling feeling = Feeling::CURIOSITY;
+if (age != Feeling::INDIFFERENCE)
+  doSomething();
+\end{verbatim}
+}
+
+This is a safer and more efficient approach. Also, enumerations can be used in \texttt{switch} statements.
+\end{block}
+
+\end{frame}
+
