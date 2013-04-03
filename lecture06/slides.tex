@@ -728,3 +728,32 @@ This is a safer and more efficient approach. Also, enumerations can be used in \
 
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Extras}
+\framesubtitle{Standard output}
+
+\begin{block}{Instead of function calls, {\em streams} are used}
+
+{\scriptsize 
+\begin{verbatim}
+string a = "test";
+int b = 1;
+std::cout << "This is " << b << " " << a << std::endl;
+\end{verbatim}
+}
+
+Essentially, you concatenate text into the standard output. It is not necessary to format variables.
+\end{block}
+\pause
+\begin{block}{You could overload the \texttt{<\;\!\!<} operator to handle a specific class}
+{\scriptsize 
+\begin{verbatim}
+std::ostream& operator<<(std::ostream& os, const MyClass& obj) {
+    return os << obj.methodThatReturnsSomeText();
+}
+\end{verbatim}
+}
+\end{block}
+
+\end{frame}
+
