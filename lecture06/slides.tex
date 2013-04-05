@@ -44,7 +44,7 @@ Its model may include:
 \begin{itemize}
 \item Encapsulation: you keep data and functions related to a concept within one class, possibly hiding implementation details; this improves clarity
 \item Inheritance: you can create subclasses, inheriting some features of the parent class; this saves development time by reducing duplication
-\item Polymorphism: on runtime, you can pass different implementations of an object; this allows to reason in terms of interfaces rather than implementations
+\item Polymorphism: on runtime, you can work on different implementations of a class; this allows to reason in terms of interfaces rather than implementations
 \end{itemize}
 Our component-based design makes heavy use of polymorphism.
 \end{block}
@@ -81,7 +81,7 @@ Available online:
 \frametitle{Encapsulation}
 \framesubtitle{Keep related concepts together}
 
-\begin{block}{Example: the Animal class}
+\begin{block}{Example: an Animal class}
 It may have:
 \begin{itemize}
 \item Fields like race, gender, color, etc.
@@ -90,7 +90,11 @@ It may have:
 \end{block}
 \pause
 \begin{block}{Then we can create Animal objects and use them}
-Compare this with having ordered arrays for each field, and an external method that takes two Animal objects and returns the result.
+Compare this with having ordered arrays for each field, and an external method that takes two Animal objects and operates on them.
+\end{block}
+\pause
+\begin{block}{C has structs!}
+Ok, but no concept of methods or operators, for starters.
 \end{block}
 
 \end{frame}
