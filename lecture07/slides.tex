@@ -1,0 +1,218 @@
+\section{Overview}
+
+\begin{frame}
+\frametitle{Overview}
+\framesubtitle{What is SystemC?}
+
+\begin{block}{SystemC is an HDL: Hardware Description Language}
+Differently from other HDLs, its programming model facilitates integration with software by using C++ as a foundation language.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Overview}
+\framesubtitle{What SystemC adds above C++}
+
+\begin{block}{Some hardware-oriented features:}
+\begin{itemize}
+\item Time model: time must have units, need clocks
+\pause
+\item Hardware data types: signals need high impedance and undefined state
+\pause
+\item Module hierarchy: structural hardware description requires components
+\pause
+\item Communication management: modules exchange data with different transports
+\pause
+\item Concurrency model: real-time communication and execution must be simulated properly
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\section{Elements}
+
+\begin{frame}
+\frametitle{Elements}
+\framesubtitle{At a glance}
+
+\begin{enumerate}
+\item Modules and hierarchy
+\item Threads and methods
+\item Events, sensitivity and notification
+\item Data types
+\item Ports, interfaces and channels
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Elements}
+\framesubtitle{Modules and hierarchy}
+
+\begin{block}{The \texttt{sc\_module} base class is used for modules}
+It can be derived from to create a module, or a \texttt{SC\_MODULE} macro can be used.
+\end{block}
+\pause
+\begin{block}{Modules are also containers: hierarchy}
+A module may contain other modules, processes, channels and ports.
+\end{block}
+\pause
+\begin{block}{A comparison to VHDL}
+The entity goes into the header (.hpp) file, the architecture into the source (.cpp) file.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Elements}
+\framesubtitle{Threads and methods}
+
+\begin{block}{A module is "run" by means of threads and methods}
+Both are member functions of the module that are invoked as processes:
+\begin{itemize}
+\item \texttt{SC\_METHOD}: repeatedly run; no time passes between invocation and return of the function
+\item \texttt{SC\_THREAD}: run once; may be suspended, allowing time to pass during execution
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Elements}
+\framesubtitle{Events, sensitivity and notification}
+
+\begin{block}{Processes communicate based on events}
+The \texttt{sc\_event} and \texttt{sc\_event\_queue} classes are used.
+\end{block}
+\begin{block}{Methods and threads may have {\em sensitivity} to events}
+SystemC offers {\em static} (i.e., defined at compile-time) sensitivity or {\em dynamic} (i.e., can be changed at run-time) sensitivity.
+
+\medskip
+Calls to \texttt{wait} and \texttt{notify} on a given event handle the actual communication between processes.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Elements}
+\framesubtitle{Data types}
+
+\begin{block}{Data types are implemented using C++ templates}
+Templates allow to {\em parameterize} the type, for example to set precision.
+\end{block}
+\pause
+\begin{block}{Some relevant types:}
+\begin{itemize}
+\item \texttt{sc\_int}: an integer
+\item \texttt{sc\_uint}: an unsigned integer
+\item \texttt{sc\_fixed}: a fixed point non-integer
+\item \texttt{sc\_logic}: a logical value (1,0,X,Z)
+\item \texttt{sc\_lv}: a logical vector
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Elements}
+\framesubtitle{Ports, interfaces and channels}
+
+\begin{block}{Channels+interfaces model communication between modules}
+The \texttt{sc\_channel} base class is used, along with some \texttt{sc\_interface} classes.
+\end{block}
+\pause
+\begin{block}{Examples:}
+\begin{itemize}
+\item Channels: \texttt{sc\_mutex}, \texttt{sc\_semaphore}, \texttt{sc\_signal}, \texttt{sc\_fifo}
+\item Interfaces: \texttt{sc\_signal\_in\_if}, \texttt{sc\_signal\_inout\_if}, \texttt{sc\_fifo\_out\_if}
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Modules can be accessed through ports}
+In this way, we can match module interfaces with channel interfaces.
+\end{block}
+
+\end{frame}
+
+\section{Installation}
+
+\begin{frame}
+\frametitle{Installation of the library}
+\framesubtitle{Get the sources}
+
+\begin{block}{SystemC sources are under an Open Source License}
+You need to do a free registration at 
+{ \scriptsize
+\url{http://www.accellera.org/kmembership_info/individual_signup/}
+}
+
+\medskip 
+Then you can download \texttt{systemc-2.3.0.tgz} from 
+{ \scriptsize
+\url{http://www.accellera.org/downloads/standards/systemc}
+}
+\end{block}
+\begin{block}{Extract the sources}
+\texttt{\$ tar xf systemc-2.3.0.tgz} \\
+will extract a \texttt{systemc-2.3.0} directory that you can move to, for example,
+\texttt{\textasciitilde{}/sources/}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Installation of the library}
+\framesubtitle{Build and install}
+
+\begin{block}{For build and local install}
+\begin{enumerate}
+\item \texttt{\$ mkdir build \&\& cd build}
+\item \texttt{\$ ../configure}
+\item \texttt{\$ make}
+\item \texttt{\$ sudo make install}
+\end{enumerate}
+You can verify the correct installation with: \texttt{\$ make check}
+\end{block}
+\pause
+\begin{block}{For global install}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item \texttt{\$ sudo cp -R ../include/* /usr/include}
+\item \texttt{\$ sudo cp ../lib-linux64/* /usr/lib}
+\end{enumerate}
+For 32 bits machines use \texttt{lib-linux} instead.
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Installation of the library}
+\framesubtitle{Check the global install}
+{ \scriptsize 
+\begin{verbatim}
+#include <systemc.h>
+#include <iostream>
+
+SC_MODULE(Hello) {
+  SC_CTOR(Hello) {
+    SC_THREAD(salutation);
+  }
+
+  void salutation() {
+    std::cout << "Hello SystemC world!" << std::endl;
+  }
+};
+
+int sc_main(int sc_argc, char* sc_argv[]) {
+  Hello hello("helloInstance");
+  sc_start();
+  return 0;
+}
+\end{verbatim}
+\begin{itemize}
+\item Compile with: \texttt{\$ g++ hello.cpp -o hello -l systemc}
+\end{itemize}
+}
+
+\end{frame}
