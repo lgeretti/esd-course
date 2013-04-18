@@ -1,0 +1,113 @@
+\section{Introduction}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{C++ data types}
+
+\begin{block}{You could use the following:}
+\begin{itemize}
+\item bool: true/false, but also binary data
+\item char: ascii character, but also byte data
+\item short: not shorter than one byte
+\item int: not shorter than a short
+\item long: not shorter than an int
+\item long long: not shorter than a long
+\item float: 32 bits floating point
+\item double: 64 bits floating point
+\item long double: not shorter than a double
+\end{itemize}
+But they depend on the architecture, hence are not portable.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{SystemC data types}
+
+\begin{block}{SystemC has more flexible types}
+They are (templated) classes:
+\begin{itemize}
+\item Their bit width is configurable
+\item They still have operators
+\item They also have some utility methods
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Categories:}
+\begin{enumerate}
+\item Bit vector
+\item Logic
+\item Integer
+\item Fixed-point
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\section{Categories}
+
+\subsection{Logic}
+
+\begin{frame}[fragile]
+\frametitle{Categories}
+\framesubtitle{Bit vector}
+
+\begin{block}{\texttt{sc\_bv<BITWIDTH> NAME...;}}
+\begin{itemize}
+\item supports bit selection (i.e., {\bfseries \texttt{[]}}) and \texttt{range()}.
+\item supports bitwise operations (i.e., \verb+&,|,^+)
+\item has 1-bit reduction operations in the form: \texttt{and\_reduce()}, \texttt{or\_reduce()}, \texttt{xnor\_reduce()}, etc.
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Examples:} 
+\vspace{-1em}
+\begin{verbatim}
+sc_bv<5> positions = "01101";
+sc_bv<6> mask = "100111";
+sc_bv<5> active = positions & mask; // gives 00101
+sc_bv<1> all = active.and_reduce(); // gives 0
+positions.range(3,2) = "00"; // changes to 00001
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Categories}
+\framesubtitle{Logic}
+
+{\scriptsize 
+\begin{block}{\texttt{sc\_logic NAME...;} and \texttt{sc\_bv<BITWIDTH> NAME...;}}
+Values for the single element:
+\begin{itemize}
+\item 0: \,\, \texttt{SC\_LOGIC\_0, Log\_0, '0'}
+\item 1: \,\, \texttt{SC\_LOGIC\_1, Log\_1, '1'}
+\item Z: \,\, \texttt{SC\_LOGIC\_Z, Log\_Z, 'Z', 'z'}
+\item X: \,\, \texttt{SC\_LOGIC\_X, Log\_X, 'X', 'x'}
+\end{itemize}
+Operators, ranges and reductions work as with bit vectors.
+\end{block}
+\pause
+\begin{block}{Examples:} 
+\vspace{-1em}
+\begin{verbatim}
+sc_lv<5> positions = "01xz1";
+sc_bv<6> mask = "100111";
+sc_bv<5> active = positions & mask; // gives 00101
+sc_bv<1> all = active.and_reduce(); // gives 0
+positions.range(3,2) = "00"; // changes to 00001
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+}
+\end{frame}
+
+\subsection{Integer}
+
+
+\subsection{Fixed-point}
+
+
+\section{Operators/methods}
