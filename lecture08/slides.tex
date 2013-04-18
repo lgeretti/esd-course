@@ -46,7 +46,7 @@ They are (templated) classes:
 
 \section{Categories}
 
-\subsection{Logic}
+\subsection{Bit vector}
 
 \begin{frame}[fragile]
 \frametitle{Categories}
@@ -74,12 +74,18 @@ positions.range(3,2) = "00"; // changes to 00001
 
 \end{frame}
 
+\subsection{Logic}
+
 \begin{frame}[fragile]
 \frametitle{Categories}
 \framesubtitle{Logic}
 
 {\scriptsize 
-\begin{block}{\texttt{sc\_logic NAME...;} and \texttt{sc\_bv<BITWIDTH> NAME...;}}
+\begin{block}{Scalar and vector}
+\begin{itemize}
+\item \texttt{sc\_logic NAME...;}
+\item \texttt{sc\_bv<BITWIDTH> NAME...;}
+\end{itemize}
 Values for the single element:
 \begin{itemize}
 \item 0: \,\, \texttt{SC\_LOGIC\_0, Log\_0, '0'}
@@ -94,20 +100,273 @@ Operators, ranges and reductions work as with bit vectors.
 \vspace{-1em}
 \begin{verbatim}
 sc_lv<5> positions = "01xz1";
-sc_bv<6> mask = "100111";
-sc_bv<5> active = positions & mask; // gives 00101
-sc_bv<1> all = active.and_reduce(); // gives 0
-positions.range(3,2) = "00"; // changes to 00001
+sc_lv<6> mask = "10ZX11";
+sc_lv<5> active = positions & mask; // gives 0xxx1
+active.range(0,0) = "z"; // changes to 0xxxz
+sc_logic reduction = active.or_reduce(); // gives x
 \end{verbatim}
 \vspace{-1em}
 \end{block}
 }
 \end{frame}
 
+\begin{frame}
+\frametitle{Categories}
+\framesubtitle{Logic}
+
+{\scriptsize 
+\begin{block}{Logic tables}
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+{\bfseries AND} & {\em 0} & {\em 1} & {\em X} & {\em Z}  \\
+\hline
+{\em 0} & 0 & 0 & 0 & 0 \\
+\hline
+{\em 1} & 0 & 1 & X & X \\
+\hline
+{\em X} & 0 & X & X & X \\
+\hline
+{\em Z} & 0 & X & X & X \\
+\hline
+\end{tabular}
+\end{table}
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+{\bfseries OR} & {\em 0} & {\em 1} & {\em X} & {\em Z}  \\
+\hline
+{\em 0} & 0 & 1 & X & X \\
+\hline
+{\em 1} & 1 & 1 & 1 & 1 \\
+\hline
+{\em X} & X & 1 & X & X \\
+\hline
+{\em Z} & X & 1 & X & X \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+{\bfseries NOT} & {\em 0} & {\em 1} & {\em X} & {\em Z}  \\
+\hline
+ & 1 & 0 & X & X \\
+\hline
+\end{tabular}
+\end{table}
+\end{block}
+}
+\end{frame}
+
 \subsection{Integer}
 
+\begin{frame}[fragile]
+\frametitle{Categories}
+\framesubtitle{Integer}
+
+\begin{block}{Signed/unsigned, normal or big}
+\begin{itemize}
+\item \texttt{sc\_int<BITWIDTH> NAME...;}
+\item \texttt{sc\_uint<BITWIDTH> NAME...;}
+\item \texttt{sc\_bigint<BITWIDTH> NAME...;}
+\item \texttt{sc\_biguint<BITWIDTH> NAME...;}
+\end{itemize}
+You have better control compared to c++ native integers.
+\end{block}
+\pause
+\begin{block}{Examples:} 
+\vspace{-1em}
+\begin{verbatim}
+sc_int<5> small_signed=-3;
+sc_uint<13> large(4000);
+sc_uint<14> large_signed = large + small_signed;
+sc_biguint<320> very_large;
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+
+\end{frame}
 
 \subsection{Fixed-point}
 
+\begin{frame}
+\frametitle{Categories}
+\framesubtitle{Fixed-point}
+{\scriptsize
+\begin{block}{Fixed vs Fix}
+\vspace{-1em}
+\begin{itemize}
+\item \texttt{sc\_fixed<WL,IWL[,QUANT[,OVFLW[,NBITS]]]> NAME;}
+\item \texttt{sc\_ufixed<WL,IWL[,QUANT[,OVFLW[,NBITS]]]> NAME;}
+\item \texttt{sc\_fixed\_fast<WL,IWL[,QUANT[,OVFLW[,NBITS]]]> NAME;}
+\item \texttt{sc\_ufixed\_fast<WL,IWL[,QUANT[,OVFLW[,NBITS]]]> NAME;}
+\end{itemize}
+\begin{itemize}
+\item \texttt{sc\_fix NAME(WL,IWL[,QUANT[,OVFLW[,NBITS]]]);}
+\item \texttt{sc\_ufix NAME(WL,IWL[,QUANT[,OVFLW[,NBITS]]]);}
+\item \texttt{sc\_fix\_fast NAME(WL,IWL[,QUANT[,OVFLW[,NBITS]]]);}
+\item \texttt{sc\_ufix\_fast NAME(WL,IWL[,QUANT[,OVFLW[,NBITS]]]);}
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Fields:} 
+\vspace{-1em}
+\begin{itemize}
+\item WL: total word length
+\item IWL: integer word length
+\item QUANT: quantization mode (optional)
+\item OVFLW: overflow mode (optional)
+\item NBITS: number of saturation bits (optional)
+\end{itemize}
+\vspace{-1em}
+\end{block}
+}
+\end{frame}
 
-\section{Operators/methods}
+\begin{frame}[fragile]
+\frametitle{Categories}
+\framesubtitle{Fixed-point}
+{\scriptsize
+\begin{block}{When to choose one over the other?}
+\begin{itemize}
+\item Fixed-point: set at compile-time, hence more efficient but also requires more compilation time
+\item Fix-point: set at run-time during object creation, hence more flexible but less efficient
+\end{itemize}
+Also, \texttt{fast} types are faster but limited to 53 bit precision, since they use \texttt{double} internally.
+
+\pause
+\medskip
+To use fixed-point types in your sources, you need to add a 
+
+\medskip
+\texttt{\#define SC\_INCLUDE\_FX}
+
+\medskip
+before including the SystemC headers. This is to avoid unnecessary compilation overhead when fixed-point types are not used.
+\end{block}
+\pause
+\begin{block}{Examples:} 
+\vspace{-1em}
+\begin{verbatim}
+const sc_ufixed<19,3> PI("3.141592654");
+sc_fix oil_temp(20,17);
+sc_fixed_fast<7,1> valve_opening;
+oil_temp += PI;
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+}
+\end{frame}
+
+\section{Helpers}
+
+\subsection{Operators and methods}
+
+\begin{frame}[fragile]
+\frametitle{Helpers}
+\framesubtitle{Operators and methods}
+{\scriptsize 
+\begin{block}{Operators}
+\begin{itemize}
+\item Comparison: \, \verb@== != > >= < <=@
+\item Arithmetic: \, \verb@++ -- * / \ + - << >>@
+\item Assignment: \, \verb@= &= |= ^=  *= /= %= += -= <<= >>=@
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Methods}
+\begin{itemize}
+\item Bit selection: \, \verb@bit(idx), [idx]@
+\item Range selection: \, \verb@range(high,low), (high,low)@
+\item Conversion to C++ types: \, \verb@to_double(), to_int(), to_int64(),@ \verb@to_long(), to_uint(), to_uint64(), to_ulong()@
+\item Testing: \, \verb@is_zero(), is_neg(), length()@
+\item Bit reduction: \, \verb@and_reduce(), nand_reduce(), or_reduce(),@ \verb@nor_reduce(), xor_reduce(), xnor_reduce()@
+\end{itemize}
+\end{block}
+}
+\end{frame}
+
+\subsection{Printing}
+
+\begin{frame}
+\frametitle{Helpers}
+\framesubtitle{Printing}
+
+\begin{block}{SystemC uses C++ streams}
+You can output a value using \texttt{cout} normally.
+\end{block}
+\pause
+\begin{block}{If you want more control, use \texttt{to\_string}}
+Syntax:
+\texttt{to\_string(sc\_numrep rep[, bool wprefix])}
+\begin{table}
+\begin{tabular}{|c|c|c|}
+\hline
+\texttt{sc\_numrep} & {\em Prefix} & {\em Meaning} \\
+\hline
+\texttt{SC\_DEC} & 0d & Decimal \\
+\hline
+\texttt{SC\_BIN} & 0b & Binary \\
+\hline
+\texttt{SC\_HEX} & 0x & Hexadecimal \\
+\hline
+\texttt{SC\_OCT} & 0o & Octal \\
+\hline
+\end{tabular}
+\end{table}
+where \texttt{wprefix} shows the representation prefix (true by default).
+\end{block}
+\end{frame}
+
+\section{Considerations}
+
+\begin{frame}[fragile]
+\frametitle{Considerations}
+\framesubtitle{Which types to choose}
+
+\begin{block}{Use the types closest to C++ that you can}
+This depends on the amount of simulation versus synthesis you are going to perform.
+\end{block}
+\pause
+\begin{block}{Data type performance}
+\vspace{-0.5em}
+\begin{table}
+\begin{tabular}{l|l}
+\hline
+Speed & Data type \\
+\hline
+Fastest & \verb@int, double, bool, unsigned int, etc.@ \\
+        & \verb@sc_int, sc_uint@ \\
+        & \verb@sc_bv, sc_logic, sc_lv@ \\
+        & \verb@sc_bigint, sc_biguint@ \\
+        & \verb@sc_fixed_fast, sc_fix_fast@ \\
+        & \verb@sc_ufixed_fast, sc_ufix_fast@ \\
+        & \verb@sc_fixed, sc_fix@ \\ 
+Slowest & \verb@sc_ufixed, sc_ufix@ \\
+\hline
+\end{tabular}
+\end{table}
+\vspace{-1em}
+\end{block}
+
+\end{frame}
+
+\section{Exercise}
+
+\begin{frame}
+\frametitle{Exercise}
+\framesubtitle{Play with types}
+
+\begin{block}{What to do:}
+Perform operations using the four categories, employing methods where appropriate.
+\end{block}
+\begin{block}{Sample repository:}
+\url{https://bitbucket.org/uniud_esd/systemc-types} 
+
+\medskip
+{\scriptsize (to clone: \texttt{\$ git clone git@bitbucket.org:uniud\_esd/systemc-types})}
+\end{block}
+
+\end{frame}
