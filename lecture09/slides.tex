@@ -1,0 +1,101 @@
+\section{The program}
+
+\begin{frame}[fragile]
+\frametitle{The program}
+\framesubtitle{Structure of the program}
+
+\begin{block}{The body of your executable is:}
+\vspace{-1em}
+\begin{verbatim}
+int sc_main(int argc, char* argv[]) { // Entry
+  // Elaboration phase:
+  // ...
+  sc_start(); // Simulation phase
+  // Post-processing phase:
+  // ...
+  return EXIT_CODE; // Exit (0 means success)
+}
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+\pause
+\begin{block}{Where is the \texttt{main}?}
+SystemC hides it within the library, to handle some internal operations.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{The program}
+\framesubtitle{The phases}
+
+\begin{block}{Three phases have been identified:}
+\begin{enumerate}
+\item Elaboration: modules are constructed and connected one another
+\item Simulation: processes are executed under the simulator scheduler
+\item Post-processing: results from simulation may be evaluated, for example to test behavior and decide success or failure
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\section{Modules}
+
+\subsection{Definition}
+
+\begin{frame}[fragile]
+\frametitle{Modules}
+\framesubtitle{Definition using the SystemC macro}
+
+\begin{block}{A module is a container for state, behavior and structure}
+It is comparable to a VHDL entity.
+\end{block}
+\pause
+\begin{block}{The syntax using the \texttt{SC\_MODULE} macro:}
+\vspace{-1em}
+\begin{verbatim}
+#include <systemc.h>
+SC_MODULE(module_name) {
+  // Module body
+};
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+\pause
+\begin{block}{The body can contain:}
+\vspace{-0.5em}
+\begin{itemize}
+\item Constructors and destructor
+\item Ports, channels and data members
+\item Other modules
+\item Processes
+\end{itemize}
+\vspace{-0.5em}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Modules}
+\framesubtitle{Definition without the SystemC macro}
+
+\begin{block}{What the macro means:}
+\vspace{-1em}
+\begin{verbatim}
+#define SC_MODULE(module_name) \
+    struct module_name : public sc_module
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+\pause
+\begin{block}{However, you should use the following:}
+\vspace{-1em}
+\begin{verbatim}
+class module_name : public sc_module {
+  public:
+    // Module body
+  private:
+    // Private parts
+}
+\end{verbatim}
+This is the syntax closest to C++.
+\end{block}
+\end{frame}
