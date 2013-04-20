@@ -1,8 +1,8 @@
 \section{The program}
 
 \begin{frame}[fragile]
-\frametitle{The program}
-\framesubtitle{Structure of the program}
+\frametitle{The SystemC program}
+\framesubtitle{Structure}
 
 \begin{block}{The body of your executable is:}
 \vspace{-1em}
@@ -25,7 +25,7 @@ SystemC hides it within the library, to handle some internal operations.
 \end{frame}
 
 \begin{frame}
-\frametitle{The program}
+\frametitle{The SystemC program}
 \framesubtitle{The phases}
 
 \begin{block}{Three phases have been identified:}
@@ -35,16 +35,18 @@ SystemC hides it within the library, to handle some internal operations.
 \item Post-processing: results from simulation may be evaluated, for example to test behavior and decide success or failure
 \end{enumerate}
 \end{block}
+\pause
+This lecture focuses on module declaration, definition and construction.
 
 \end{frame}
 
 \section{Modules}
 
-\subsection{Definition}
+\subsection{Declaration}
 
 \begin{frame}[fragile]
 \frametitle{Modules}
-\framesubtitle{Definition using the SystemC macro}
+\framesubtitle{Declaration using the SystemC macro}
 
 \begin{block}{A module is a container for state, behavior and structure}
 It is comparable to a VHDL entity.
@@ -75,7 +77,7 @@ SC_MODULE(module_name) {
 
 \begin{frame}[fragile]
 \frametitle{Modules}
-\framesubtitle{Definition without the SystemC macro}
+\framesubtitle{Declaration without the SystemC macro}
 
 \begin{block}{What the macro means:}
 \vspace{-1em}
@@ -94,8 +96,368 @@ class module_name : public sc_module {
     // Module body
   private:
     // Private parts
+};
+\end{verbatim}
+This is the syntax closest to C++'s "best practice".
+\end{block}
+\end{frame}
+
+\subsection{Construction}
+
+\begin{frame}[fragile]
+\frametitle{Modules}
+\framesubtitle{Basic construction}
+
+\begin{block}{A module, being a class, needs a constructor}
+Differently from C++, one constructor is required.
+\end{block}
+\pause
+\begin{block}{You can use the \texttt{SC\_CTOR} macro}
+\vspace{-1em}
+\begin{verbatim}
+SC_MODULE(module_name) {
+  SC_CTOR(module_name) : <initialization> {
+    <submodule allocation>
+    <submodule connection>
+    <process registration>
+    <anything else>
+  }
+};
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Modules}
+\framesubtitle{Flexible construction}
+
+\begin{block}{What if we need a different constructor?}
+\vspace{0.5em}
+{\scriptsize
+You need to add the \texttt{SC\_HAS\_PROCESS(module\_name);} macro call.
+
+\begin{itemize}
+\item Either within the module declaration:
+\begin{verbatim}
+SC_MODULE(module_name) {
+  SC_HAS_PROCESS(module_name);
+  module_name(sc_module_name myname[, other_args...]) 
+   : sc_module(myname)[, other_initialization] {
+    <the usual constructor body>
+  }
+};
+\end{verbatim}
+\pause
+\item Or on top of the definition file:
+\begin{verbatim}
+SC_HAS_PROCESS(module_name);
+...
+module_name::module_name(sc_module_name myname[, other_args...]) 
+   : sc_module(myname)[, other_initialization] {
+  <the usual constructor body>
 }
 \end{verbatim}
-This is the syntax closest to C++.
+\end{itemize}
+}
+\end{block}
+
+\end{frame}
+
+\subsection{Definition}
+
+\begin{frame}[fragile]
+\frametitle{Modules}
+\framesubtitle{Definition style: traditional}
+
+\begin{block}{Only the process/helper functions go to the .cpp file}
+{\scriptsize
+\vspace{-0.5em}
+\begin{verbatim}
+// name.h
+#ifndef NAME_H
+#define NAME_H
+...
+SC_MODULE(Name) {
+  ...
+  SC_CTOR(Name) : <initializations> {
+    <implementation>
+  }
+  <process declarations>
+  <helper declarations>
+};
+#endif
+
+// name.cpp
+#include <systemc.h>
+#include "name.h"
+Name::process_function { <implementation> }
+Name::helper_function { <implementation> }
+\end{verbatim}
+}
+\vspace{-0.5em}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Modules}
+\framesubtitle{Definition style: alternative}
+
+\begin{block}{All definitions go to the .cpp file}
+{\scriptsize
+\vspace{-0.5em}
+\begin{verbatim}
+// name.hpp
+#ifndef NAME_HPP
+#define NAME_HPP
+...
+SC_MODULE(Name) {
+  ...
+  SC_CTOR(Name);
+  <process declarations>
+  <helper declarations>
+};
+#endif
+
+// name.cpp
+#include <systemc.h>
+#include "name.hpp"
+SC_HAS_PROCESS(Name);
+Name::Name(sc_module_name myname) : sc_module(myname), <init> {
+  <implementation>
+}
+...
+\end{verbatim}
+}
+\vspace{-0.8em}
+\end{block}
+\end{frame}
+
+\subsection{Instantiation}
+
+\begin{frame}[fragile]
+\frametitle{Modules}
+\framesubtitle{Instantiation}
+
+\begin{block}{You can allocate on the stack or the heap}
+{\scriptsize
+Stack (preferable):
+\vspace{-0.5em}
+\begin{verbatim}
+#include <systemc.h>
+#include "mymodule.hpp"
+int sc_main(int argc, char* argv[]) {
+  MyModule myModule1("myModule1");
+  sc_start();
+  return 0;
+}
+\end{verbatim}
+Heap:
+\begin{verbatim}
+#include <systemc.h>
+#include "mymodule.hpp"
+int sc_main(int argc, char* argv[]) {
+  MyModule* myModule1 = new MyModule("myModule1");
+  sc_start();
+  delete myModule1;
+  return 0;
+}
+\end{verbatim}
+\vspace{-0.8em}
+Prefer module names that reflect variable names (useful for debugging).
+}
+\end{block}
+\end{frame}
+
+\section{Submodules}
+
+\subsection{Declaration}
+
+\begin{frame}
+\frametitle{Submodules}
+\framesubtitle{Declaration}
+
+\begin{block}{Submodules are just module fields of a module class}
+No need to introduce additional concepts.
+\begin{itemize}
+\item Note: Git submodules and CMake subdirectories will be used for any SystemC module {\em external} to the current project
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{There are four styles for the definition}
+This depends on the use of the stack or heap, and of keeping all the definition within the .cpp file:
+\begin{enumerate}
+\item Stack, constructors in the .hpp
+\item Stack, constructors in the .cpp (preferable)
+\item Heap, constructors in the .hpp
+\item Heap, constructors in the .cpp
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\subsection{Definition}
+
+\begin{frame}[fragile]
+\frametitle{Submodules}
+\framesubtitle{Definition: using the stack, constructors in the .hpp}
+
+{\scriptsize
+\vspace{-0.5em}
+\begin{verbatim}
+// car.hpp
+#include "body.hpp"
+#include "engine.hpp"
+SC_MODULE(Car) {
+  Body body;
+  Engine engine;
+  SC_CTOR(Car) : body("body"), engine("engine") {
+    // Other initialization
+  }
+}
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Submodules}
+\framesubtitle{Definition: using the stack, constructors in the .cpp}
+
+{\scriptsize
+\vspace{-0.5em}
+\begin{verbatim}
+// car.hpp
+#include "body.hpp"
+#include "engine.hpp"
+SC_MODULE(Car) {
+  Body body;
+  Engine engine;
+  Car(sc_module_name name);
+}
+
+// car.cpp
+#include <systemc.h>
+#include "car.hpp"
+SC_HAS_PROCESS(Car);
+Car::Car(sc_module_name name) : 
+  sc_module(name), body("body"), engine("engine") {
+  // Other initialization
+}
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Submodules}
+\framesubtitle{Definition: using the heap, constructors in the .hpp}
+
+{\scriptsize
+\vspace{-0.5em}
+\begin{verbatim}
+// car.hpp
+#include "body.hpp"
+#include "engine.hpp"
+SC_MODULE(Car) {
+  Body* body;
+  Engine* engine;
+  SC_CTOR(Car) : 
+    body(new Body("body")), engine(new Engine("engine")) {
+    // Other initialization
+  }
+}
+\end{verbatim}
+where the constructor can also be equivalently defined as:
+\begin{verbatim}
+SC_CTOR(Car) {
+  body = new Body("body");
+  engine = new Engine("engine");
+  // Other initialization
+}
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Submodules}
+\framesubtitle{Definition: using the heap, constructors in the .cpp}
+
+{\scriptsize
+\vspace{-0.5em}
+\begin{verbatim}
+// car.hpp
+class Body;
+class Engine;
+SC_MODULE(Car) {
+  Body* body;
+  Engine* engine;
+  Car(sc_module_name name);
+}
+
+// car.cpp
+#include <systemc.h>
+#include "car.hpp"
+#include "body.hpp"
+#include "engine.hpp"
+SC_HAS_PROCESS(Car);
+Car::Car(sc_module_name name) : 
+  sc_module(name), 
+  body(new Body("body")), engine(new Engine("engine")) {
+  // Other initialization
+}
+\end{verbatim}
+You can use {\em forward class declaration} to make the compilation more efficient.
+}
+\end{frame}
+
+\subsection{Destruction}
+
+\begin{frame}[fragile]
+\frametitle{Submodules}
+\framesubtitle{Destruction}
+
+{\scriptsize
+\begin{block}{{\small For heap allocation, don't we define the Car destructor?}}
+Indeed, we should define the destructor on the containing module (Car), to deallocate the submodules.
+\end{block}
+\pause
+\begin{block}{{\small Destructor declaration and definition:}}
+\vspace{-1em}
+\begin{verbatim}
+// car.hpp
+...
+SC_MODULE(Car) {
+  Body* body;
+  Engine* engine;
+  Car(sc_module_name name);
+  ~Car();
+}
+
+// car.cpp
+...
+Car::~Car() {
+  delete body;
+  delete engine;
+}
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+}
+\end{frame}
+
+\section{Exercise}
+
+\begin{frame}
+\frametitle{Exercise}
+\framesubtitle{Objective}
+
+\begin{block}{Create some module classes}
+\begin{itemize}
+\item Try all the possible definition syntaxes for a module
+\item Try using submodules, with different definition and allocation syntaxes
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Topic to be used}
+A computer with its different parts (CPU, memory, USB hub, power supply, etc.).
 \end{block}
 \end{frame}
