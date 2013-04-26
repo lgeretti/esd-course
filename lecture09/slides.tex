@@ -175,9 +175,9 @@ module_name::module_name(sc_module_name myname[, other_args...])
 {\scriptsize
 \vspace{-0.5em}
 \begin{verbatim}
-// name.h
-#ifndef NAME_H
-#define NAME_H
+// name.hpp
+#ifndef NAME_HPP
+#define NAME_HPP
 ...
 SC_MODULE(Name) {
   ...
@@ -191,7 +191,7 @@ SC_MODULE(Name) {
 
 // name.cpp
 #include <systemc.h>
-#include "name.h"
+#include "name.hpp"
 Name::process_function { <implementation> }
 Name::helper_function { <implementation> }
 \end{verbatim}
