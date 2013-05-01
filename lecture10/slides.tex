@@ -1,0 +1,581 @@
+\section{Introduction}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{Contents}
+\begin{block}{We will cover dynamism by discussing about:}
+\begin{enumerate}
+\item Time: how SystemC explicitly deals with simulated time;
+\item Processes: how modules can do things
+\begin{itemize}
+\item Threads
+\item Methods
+\end{itemize}
+\item Events: how modules can synchronize between each other.
+\end{enumerate}
+\end{block}
+\pause
+\begin{block}{Repository for examples:}
+\url{https://bitbucket.org/uniud_esd/systemc-processes}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{Simulation evolution}
+
+\begin{block}{How does simulation work?}
+It is a succession of {\em evaluation} and {\em advancement} phases:
+\begin{enumerate}
+\item Evaluation: each runnable process executes until a \texttt{return} or a \texttt{wait} is issued;
+\begin{itemize}
+\item A \texttt{wait} for a process removes that process from the runnable set, and puts an {\em event} into an {\em event queue}: the event has an associated time given by the final time of the wait period;
+\item A \texttt{return} for a process clearly concludes the simulation for that process.
+\end{itemize}
+Please note how the order in which the processes run during the evaluation phase is irrelevant.
+\pause
+\item Advancement: simulated time is advanced up to the next event in the event queue, where some processes may again be put into the runnable state.
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\section{Time}
+
+\begin{frame}
+\frametitle{Time}
+\framesubtitle{Real and simulated times are different}
+
+\begin{block}{We identify three kinds of times:}
+\begin{enumerate}
+\item Wall-clock time: the real time between start and end of an operation, including wait times;
+\pause
+\item Processor time: the real time actually spent computing during such an operation, thus excluding the idle time;
+\pause
+\item Simulated time: the time between start and end of an operation expressed under a time model for the simulated system.
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Time}
+\framesubtitle{Simulated time}
+
+\begin{block}{SystemC uses the \texttt{sc\_time} type}
+\vspace{0.5em}
+It has at least 64 bit precision, and can be specified with a time unit:
+\vspace{-0.5em}
+{\scriptsize 
+\begin{verbatim}
+sc_time name; // no initialization
+sc_time name(double, sc_time_unit); // set value and unit
+\end{verbatim}
+}
+\vspace{-0.5em}
+\end{block}
+\pause
+\begin{block}{Units}
+\begin{table}
+\begin{tabular}{lll}
+\hline
+enum & Units & Magnitude \\
+\hline
+\texttt{SC\_FS} & femtoseconds & {\small $10^{-15}$} \\
+\texttt{SC\_PS} & picoseconds & {\small $10^{-12}$} \\
+\texttt{SC\_NS} & nanoseconds & {\small $10^{-9}$} \\
+\texttt{SC\_US} & microseconds & {\small $10^{-6}$} \\
+\texttt{SC\_MS} & milliseconds & {\small $10^{-3}$} \\
+\texttt{SC\_SEC} & seconds & {\small $10^{-0}$} \\
+\end{tabular}
+\end{table}
+\vspace{-1em}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Time}
+\framesubtitle{Resolution}
+
+\begin{block}{All \texttt{sc\_time} objects have a common resolution}
+This can be chosen with
+\begin{itemize}
+\item \texttt{sc\_set\_time\_resolution(double, sc\_time\_unit)}
+\end{itemize}
+Where the first parameter is a non-negative power of ten (e.g. 1, 10, 100, etc.).
+\end{block}
+\pause
+\begin{block}{Setting the resolution must be done at the beginning}
+\begin{itemize}
+\item No \texttt{sc\_time} objects must have been created yet;
+\item Simulation must not have started yet.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Time}
+\framesubtitle{Dealing with time objects}
+
+\begin{block}{Operating with other time objects or numeric values}
+\begin{itemize}
+\item Comparison: \, \verb@== != < <= > >=@
+\item Arithmetic: \, \verb@+ - * /@
+\item Assignment: \, \verb@= += -= *= /=@
+\end{itemize}
+Also, the \verb@operator<<@ is provided, i.e., you can print time objects.
+\end{block}
+\pause
+\begin{block}{Getting the current simulation time}
+You can use \verb+sc\_time\_stamp()+: \\
+\begin{verbatim}
+sc_time current_time = sc_time_stamp();
+\end{verbatim}
+This is done within code that runs during the simulation.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Time}
+\framesubtitle{Starting time evolution}
+
+\begin{block}{You call \texttt{sc\_start()} globally}
+\vspace{0.5em}
+Simulation runs until no more processing is due, or up to a provided maximum time:
+\begin{itemize}
+\item No limit: {\small \verb@sc_start();@ }
+\item Absolute limit: {\small \verb@sc_start(const sc_time& max_sc_time);@ }
+\item Relative limit: {\small \verb@sc_start(double max_time, sc_time_unit time_unit);@ }
+\end{itemize}
+In any case, you can start the simulation {\em once and once only} for one call of \texttt{sc\_main}, i.e., once per executable.
+\end{block}
+\pause
+\begin{block}{To get the simulated time, call \texttt{sc\_time\_stamp()}}
+You will do it within any process that is run by the simulator, or after the end of simulation.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Time}
+\framesubtitle{Pausing time evolution}
+
+\begin{block}{You can call \texttt{wait(sc\_time)} on any \texttt{SC\_THREAD}}
+\vspace{0.5em}
+You have two ways of calling the wait function:
+{\scriptsize 
+\begin{verbatim}
+void MyModule::myProcess(void) {
+  wait(10, SC_NS);
+  cout << "Now at " << sc_time_stamp() << endl;
+  sc_time delay(2, SC_MS);
+  wait(delay);
+  cout << "Now at " << sc_time_stamp() << endl;
+}
+\end{verbatim}
+}
+\pause
+The above code will return the following (assuming a starting time of 0 ns):
+{\scriptsize 
+\begin{verbatim}
+Now at 10 ns
+Now at 4000010 ns
+\end{verbatim}
+}
+\end{block}
+\end{frame}
+
+\section{Threads}
+
+\begin{frame}
+\frametitle{Threads}
+\framesubtitle{Registering a thread}
+
+\begin{block}{You register with \texttt{SC\_THREAD(method\_name);}}
+A couple of restrictions:
+\begin{enumerate}
+\item The \texttt{SC\_THREAD} call must be performed during the elaboration stage (for example, within the constructor);
+\item The method must exist for the module, it must return \texttt{void} and have no arguments.
+\end{enumerate}
+\end{block}
+\pause
+\begin{block}{A thread can still run indefinitely}
+You only need to create an infinite loop inside.
+\begin{itemize}
+\item To return control to the scheduler, you will use \texttt{wait} calls.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Threads}
+\framesubtitle{Example of two concurrent thread processes}
+
+{\scriptsize 
+\begin{verbatim}
+// twoprocesses.hpp
+SC_MODULE(TwoProcesses) {
+  void wiper_thread(void);
+  void blinker_thread(void);
+  SC_CTOR(TwoProcesses) {
+    SC_THREAD(wiper_thread);
+    SC_THREAD(blinker_thread);
+  }
+};
+// twoprocesses.cpp
+void TwoProcesses::wiper_thread(void) {
+  while (true) {
+    wipe_left();
+    wait(3,SC_SEC);
+    wipe_right();
+    wait(3,SC_SEC);
+}}
+void TwoProcesses::wiper_thread(void) {
+  while (true) {
+    blink_on();
+    wait(2,SC_SEC);
+    blink_off();
+    wait(2,SC_SEC);
+}}
+\end{verbatim}
+}
+
+\end{frame}
+
+\section{Events}
+
+\begin{frame}
+\frametitle{Events}
+\framesubtitle{What is an event?}
+
+\begin{block}{Definition}
+A SystemC event is something that occurs at a specific instant in time. It has no value and no duration.
+\begin{itemize}
+\item We have already seen an implicit event: the timeout for a \texttt{wait(sc\_time)} call.
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Explicit events: the \texttt{sc\_event} type}
+It allows to notify (cause) an event, for other processes to wait for.
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Events}
+\framesubtitle{Causing an event}
+
+\begin{block}{Syntaxes:}
+\begin{itemize}
+\item \texttt{event\_name.notify(void);} \\ {\em Immediate}, the processes waiting for it are immediately moved from the waiting set into the runnable set;
+\pause
+\item \texttt{event\_name.notify(SC\_ZERO\_TIME);} \\ {\em Delayed}, the processes waiting for it are moved after all runnable processes in the current evaluation state have executed;
+\pause
+\item \texttt{event\_name.notify(sc\_time);} \\ {\em Timed}, the processes waiting for it are scheduled forward according to the given delay (greater than zero);
+\pause
+\item \texttt{event\_name.notify(double, sc\_time\_unit);} \\ {\em Timed}, alternative syntax.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Events}
+\framesubtitle{Multiple notifications and canceling}
+
+\begin{block}{Only the nearest notification is considered}
+\vspace{-1em}
+\begin{verbatim}
+sc_event my_event;
+my_event.notify(10, SC_NS);
+my_event.notify(5, SC_NS); // only this one stays
+my_event.notify(15, SC_NS);
+\end{verbatim}
+\vspace{-1em}
+\end{block}
+\pause
+\begin{block}{Event notifications can be canceled}
+You have to call
+\begin{verbatim}
+event_name.cancel();
+\end{verbatim}
+Note that immediate events cannot be canceled.
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Events}
+\framesubtitle{More complex scheduling example}
+
+{\scriptsize 
+\begin{verbatim}
+sc_event action; // the action
+sc_time now(sc_time_stamp()); // the current simulated time
+// immediately cause action to fire
+action.notify();
+// schedule new action for 20 ms from now
+action.notify(20, SC_MS);
+// reschedule action for 1.5 ns from now
+action.notify(1.5, SC_NS);
+// useless, redundant
+action.notify(1.5, SC_NS);
+// useless, preempted by event at 1.5 ns
+action.notify(3.0, SC_NS);
+// reschedule action for the next evaluation step
+action.notify(SC_ZERO_TIME);
+// useless, preempted by action event at SC_ZERO_TIME
+action.notify(1, SC_FS);
+// cancel action entirely
+action.cancel();
+// schedule new action for 1 fs from now
+action.notify(1, SC_FS);
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Events}
+\framesubtitle{Waiting for an event}
+
+\begin{block}{Full set of wait options:}
+\vspace{-1em}
+{\scriptsize 
+\begin{verbatim}
+wait(sc_time); // timeout is the event
+wait(double, sc_time_unit); // convenient variant
+wait(event); // single event
+wait(sc_event | sc_event | ...); // any of these
+wait(sc_event & sc_event & ...); // all of these
+wait(sc_time, sc_event); // timeout or event
+wait(sc_time, sc_event | sc_event | ...); // timeout or any event
+wait(sc_time, sc_event & sc_event & ...); // timeout or all events
+wait(); // static sensitivity (discussed later)
+\end{verbatim}
+}
+\vspace{-1em}
+\end{block}
+\pause
+\begin{block}{The fundamental rule:}
+To watch for an event, a process must issue a \texttt{wait} before the corresponding \texttt{notify}.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Events}
+\framesubtitle{Immediate notifications}
+
+\begin{block}{For immediates, the order of registration counts!}
+\vspace{-1em}
+{\scriptsize 
+\begin{verbatim}
+SC_MODULE(ImmediateProblem) {
+  SC_CTOR(ImmediateProblem) {
+    SC_THREAD(B_thread);
+    SC_THREAD(A_thread); // Problem, should go to the bottom
+    SC_THREAD(C_thread);
+  }
+  void A_thread() {
+    a_event.notify(); // Immediate
+    cout << "A sent a_event!" << endl;
+  }
+  void B_thread() {
+    wait(a_event);
+    cout << "B got a_event!" << endl;
+  }
+  void C_thread() {
+    wait(a_event);
+    cout << "C got a_event!" << endl;
+  }
+  sc_event a_event;
+};
+\end{verbatim}
+}
+\vspace{-1em}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Events}
+\framesubtitle{How to avoid missing events or deadlocks}
+
+\begin{block}{This loops indefinitely in zero simulated time:}
+\vspace{-1em}
+{\tiny 
+\begin{verbatim}
+SC_MODULE(OrderedEvents) {
+  SC_CTOR(OrderedEvents) {
+    SC_THREAD(B_thread);
+    SC_THREAD(A_thread);
+    SC_THREAD(C_thread);
+  }
+  void A_thread() {
+    while (true) {
+      a_event.notify(SC_ZERO_TIME);
+      wait(c_event);
+    }
+  }
+  void B_thread() {
+    while (true) {
+      b_event.notify(SC_ZERO_TIME);
+      wait(a_event);
+    }
+  }
+  void C_thread() {
+    while (true) {
+      c_event.notify(SC_ZERO_TIME);
+      wait(b_event);
+    }
+  }  
+  sc_event a_event, b_event, c_event;
+};
+\end{verbatim}
+}
+\vspace{-1em}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Events}
+\framesubtitle{How to avoid missing events or deadlocks}
+
+\begin{block}{This loops indefinitely in zero simulated time:}
+\vspace{-1em}
+{\tiny 
+\begin{verbatim}
+SC_MODULE(OrderedEvents) {
+  SC_CTOR(OrderedEvents) {
+    SC_THREAD(B_thread);
+    SC_THREAD(A_thread);
+    SC_THREAD(C_thread);
+  }
+  void A_thread() {
+    while (true) {
+      a_event.notify(SC_ZERO_TIME);
+      wait(c_event);
+    }
+  }
+  void B_thread() {
+    while (true) {
+      b_event.notify(SC_ZERO_TIME);
+      wait(a_event);
+    }
+  }
+  void C_thread() {
+    while (true) {
+      c_event.notify(SC_ZERO_TIME);
+      wait(b_event);
+    }
+  }  
+  sc_event a_event, b_event, c_event;
+};
+\end{verbatim}
+}
+\vspace{-1em}
+\end{block}
+\end{frame}
+
+\section{Methods}
+
+\begin{frame}
+\frametitle{Methods}
+\framesubtitle{Registering a method}
+
+\begin{block}{You register with \texttt{SC\_METHOD(method\_name);}}
+Restrictions:
+\begin{enumerate}
+\item The same as those for \texttt{SC\_THREAD}: must be called within the constructor, and method name must take no arguments and return void;
+\item No blocking calls (like \texttt{wait}) can be made within the used method: this will issue a runtime error.
+\end{enumerate}
+\end{block}
+\pause
+\begin{block}{SystemC methods vs SystemC threads}
+Methods can use {\em dynamic sensitivity} to cyclically run a function, using {\em triggers}.
+\end{block}
+\pause
+\begin{block}{SystemC methods vs class methods}
+Both SystemC threads and methods run class methods.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Methods}
+\framesubtitle{Triggers}
+
+\begin{block}{These perfectly mirror the syntax for \texttt{wait}:}
+\vspace{-1em}
+{\scriptsize 
+\begin{verbatim}
+next_trigger(sc_time); // timeout is the event
+next_trigger(double, sc_time_unit); // convenient variant
+next_trigger(event); // single event
+next_trigger(sc_event | sc_event | ...); // any of these
+next_trigger(sc_event & sc_event & ...); // all of these
+next_trigger(sc_time, sc_event); // timeout or event
+next_trigger(sc_time, sc_event | sc_event | ...); // timeout or any 
+next_trigger(sc_time, sc_event & sc_event & ...); // timeout or all
+next_trigger(); // re-establish static sensitivity
+\end{verbatim}
+}
+\vspace{-1em}
+\end{block}
+\pause
+\begin{block}{Important points}
+\vspace{-0.5em}
+\begin{enumerate}
+\item The trigger applies to the next execution of the method;
+\item If no \texttt{next\_trigger} is issued, the method is never called again;
+\item Subsequent \texttt{next\_trigger} calls override the previous ones.
+\end{enumerate}
+\vspace{-0.5em}
+\end{block}
+\end{frame}
+
+\section{Static sensitivity}
+
+\begin{frame}
+\frametitle{Static sensitivity}
+\framesubtitle{What is static sensitivity?}
+
+\begin{block}{It is just a matter of convenience}
+During module declaration, you specify which events would allow the repetition of code.
+\end{block}
+\pause
+\begin{block}{When to use it?}
+It is commonly used at the RTL (Register Transfer Logic) level.
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Static sensitivity}
+\framesubtitle{Declaration}
+
+\begin{block}{There exist two notations: functional and streaming}
+\vspace{0.5em}
+{\scriptsize
+Regardless of notation, the sensitivity applies to the {\em latest} process registration.
+\begin{verbatim}
+SC_MODULE(GasStation) {
+  sc_event e_request1, e_request2;
+  sc_event e_tank_filled;
+  SC_CTOR(GasStation) {
+    SC_THREAD(customer1_thread);
+      sensitive(e_tank_filled); // Functional
+    SC_METHOD(attendant_method);
+      sensitive << e_request1 << e_request2; // Streaming
+    SC_THREAD(customer2_thread);
+  }
+  void attendant_method();
+  void customer1_thread();
+  void customer2_thread();
+};
+\end{verbatim}
+\vspace{-0.5em}
+\pause
+Implementation:
+\begin{itemize}
+\item For a thread: create an infinite loop and issue a \texttt{wait();}
+\item For a method: issue a \texttt{next\_trigger();}
+\end{itemize}
+}
+\end{block}
+\end{frame}
