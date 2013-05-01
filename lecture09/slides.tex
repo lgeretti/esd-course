@@ -314,7 +314,7 @@ SC_MODULE(Car) {
   SC_CTOR(Car) : body("body"), engine("engine") {
     // Other initialization
   }
-}
+};
 \end{verbatim}
 }
 \end{frame}
@@ -333,7 +333,7 @@ SC_MODULE(Car) {
   Body body;
   Engine engine;
   Car(sc_module_name name);
-}
+};
 
 // car.cpp
 #include <systemc.h>
@@ -364,7 +364,7 @@ SC_MODULE(Car) {
     body(new Body("body")), engine(new Engine("engine")) {
     // Other initialization
   }
-}
+};
 \end{verbatim}
 where the constructor can also be equivalently defined as:
 \begin{verbatim}
@@ -391,7 +391,7 @@ SC_MODULE(Car) {
   Body* body;
   Engine* engine;
   Car(sc_module_name name);
-}
+};
 
 // car.cpp
 #include <systemc.h>
@@ -430,7 +430,7 @@ SC_MODULE(Car) {
   Engine* engine;
   Car(sc_module_name name);
   ~Car();
-}
+};
 
 // car.cpp
 ...
