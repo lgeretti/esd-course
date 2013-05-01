@@ -549,9 +549,9 @@ It is commonly used at the RTL (Register Transfer Logic) level.
 \frametitle{Static sensitivity}
 \framesubtitle{Declaration}
 
-\begin{block}{There exist two notations: functional and streaming}
-\vspace{0.5em}
 {\scriptsize
+\begin{block}{{\small There exist two notations: functional and streaming}}
+\vspace{0.1em}
 Regardless of notation, the sensitivity applies to the {\em latest} process registration.
 \begin{verbatim}
 SC_MODULE(GasStation) {
@@ -571,11 +571,12 @@ SC_MODULE(GasStation) {
 \end{verbatim}
 \vspace{-0.5em}
 \pause
-Implementation:
+Implementation scheleton:
 \begin{itemize}
-\item For a thread: create an infinite loop and issue a \texttt{wait();}
-\item For a method: issue a \texttt{next\_trigger();}
+\item \texttt{customer1\_thread}: use an infinite loop and issue a \texttt{wait();}
+\item \texttt{customer2\_thread}: use an infinite loop and wait on an \texttt{e\_tank\_filled} event; 
+\item \texttt{attendant\_method}: issue a \texttt{next\_trigger();}
 \end{itemize}
-}
 \end{block}
+}
 \end{frame}
