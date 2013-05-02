@@ -146,7 +146,8 @@ Simulation runs until no more processing is due, or up to a provided maximum tim
 \item Absolute limit: {\small \verb@sc_start(const sc_time& max_sc_time);@ }
 \item Relative limit: {\small \verb@sc_start(double max_time, sc_time_unit time_unit);@ }
 \end{itemize}
-In any case, you can start the simulation {\em once and once only} for one call of \texttt{sc\_main}, i.e., once per executable.
+You can start {\em once and once only} for one call of \texttt{sc\_main}, i.e., once per executable. You may also abruptly 
+stop the simulation, e.g., due to critical errors, with \texttt{sc\_stop()}.
 \end{block}
 \pause
 \begin{block}{To get the simulated time, call \texttt{sc\_time\_stamp()}}
