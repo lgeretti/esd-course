@@ -108,7 +108,7 @@ class SharedBus : public sc_module {
 {\scriptsize 
 \begin{verbatim}
     void grab_bus_method() {
-      if (bus_access.tryload() == 0) {
+      if (bus_access.try_lock() == 0) {
         ... // Access bus
         bus_access.unlock();
       }
@@ -131,7 +131,7 @@ class SharedBus : public sc_module {
 \item A semaphore is a sort of a set of mutexes
 \item The number of semaphores in a semaphore variable is chosen when the variable is declared
 \end{itemize}
-It addresses the requirement of exclusive reservation of a pool of resources (like a set of fuel pumps for multiple cars)
+It addresses the requirement of exclusive reservation of a pool of resources (like a set of fuel pumps for multiple cars).
 \end{block}
 \pause
 \begin{block}{Usage:}
@@ -159,7 +159,7 @@ class MultiportMemory : public sc_module {
     sc_semaphore read_ports(3);
     sc_semaphore write_ports(2);
   public: 
-    void read(int adddr, int& data) {
+    void read(int addr, int& data) {
       read_ports.wait();
       ... // Perform read
       read_ports.post();
@@ -304,16 +304,16 @@ Assignment can also be used to read and write, for simplicity.
 int count;
 sc_signal<int> count_sig;
 string message;
-sc_signal<string message_sig;
+sc_signal<string> message_sig;
 
 count = 11;
-cout_sig.write(10);
+count_sig.write(10);
 message = "First";
 message_sig.write("Hello");
 // The values currently are: 11, 0, "First", ""
 wait(SC_ZERO_TIME);
 // The values now are: 11, 10, "First", "Hello"
-count = 20
+count = 20;
 count_sig.write(count);
 // The values are: 20, 10, "First", "Hello"
 wait(SC_ZERO_TIME);
