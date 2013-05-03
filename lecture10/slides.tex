@@ -167,7 +167,7 @@ You have two ways of calling the wait function:
 void MyModule::myProcess(void) {
   wait(10, SC_NS);
   cout << "Now at " << sc_time_stamp() << endl;
-  sc_time delay(2, SC_MS);
+  sc_time delay(4, SC_MS);
   wait(delay);
   cout << "Now at " << sc_time_stamp() << endl;
 }
