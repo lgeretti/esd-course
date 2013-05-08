@@ -311,12 +311,99 @@ SC_MODULE(ExportOuterModule) {
     ExportInnerModule inner1, inner2;
     
     SC_CTOR(ExportOuterModule) : inner1("inner1"), inner2("inner2") {
-        inner1.din(din);
+        inner1.din(this->din);
         inner2.din(inner1.dout);
-        dout(inner2.dout);
+        this->dout(inner2.dout);
     }
 };
 \end{verbatim}
 }
+\end{frame}
 
+\section{Summary on connections}
+
+\begin{frame}
+\frametitle{Summary on connections}
+\framesubtitle{Legenda}
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{lecture12/img/connections.png}
+\end{figure}
+{\scriptsize
+\begin{itemize}
+\item Rectangle: module
+\item Square: port
+\item Solid circle: implementing an interface
+\item Dotted circle: export
+\item Ellipse: process
+\item Crystal: channel
+\item Straight line: interface connection
+\item Arrow: event dependency (from notifier process towards waiting process)
+\end{itemize}
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Summary on connections}
+\framesubtitle{Processes in the same module}
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{lecture12/img/connections.png}
+\end{figure}
+{\scriptsize
+\begin{enumerate}
+\item A process may communicate with another process in the same module using a channel. For example, process \texttt{pr2} to \texttt{pr3} via interface \texttt{ifX} on channel \texttt{c2i}.
+\item A process may communicate with another process in the same module using an event to synchronize exchanges of information through data variables instantiated at the module level (e.g., within
+the module class definition). For example, process \texttt{pr2} to process \texttt{pr1} via event \texttt{ev1}.
+\end{enumerate}
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Summary on connections}
+\framesubtitle{Processes in different modules}
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{lecture12/img/connections.png}
+\end{figure}
+{\scriptsize
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item A process may communicate with a process upwards in the design hierarchy using the interfaces accessed via \texttt{sc\_port<T>}. For example, process \texttt{pr3} via port \texttt{p4} using interface \texttt{if4}.
+\item A process may communicate with processes in submodule instances via interfaces to channels connected to the submodule ports. For example, process \texttt{pr3} to module \texttt{mi2} via interface \texttt{ifZ} on channel \texttt{c3i}.
+\end{enumerate}
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Summary on connections}
+\framesubtitle{Generic ports}
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{lecture12/img/connections.png}
+\end{figure}
+{\scriptsize
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item An \texttt{sc\_port<T>} may connect directly to an \texttt{sc\_port<T>} of submodules. For example, port \texttt{p1} is connected to port \texttt{pA} of submodule \texttt{mi1}.
+\item An \texttt{sc\_port<T>} may connect indirectly to a process by letting the process access the interface. This is just a process accessing a port described previously. For example, process \texttt{pr1} communicates with submodule \texttt{mi1} through interface \texttt{ifW}.
+\item An \texttt{sc\_port<T,N>} array may be used to create multiple ports using the same interface. For example, \texttt{pD[0]} and \texttt{pD[1]} of submodule \texttt{mi2}.
+\end{enumerate}
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Summary on connections}
+\framesubtitle{Exports}
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{lecture12/img/connections.png}
+\end{figure}
+{\scriptsize
+\begin{enumerate}
+\setcounter{enumi}{7}
+\item An \texttt{sc\_export<T>} may connect to another \texttt{sc\_export<T>} via interfaces to local channels. For example, port \texttt{p5} to channel \texttt{c3i} using interface \texttt{if5}.
+\item An \texttt{sc\_export<T>} may connect directly to an \texttt{sc\_export<T>} of a submodule. For example, port \texttt{p6} is directly connected to port \texttt{pG} of submodule \texttt{mi1}.
+\end{enumerate}
+}
 \end{frame}
