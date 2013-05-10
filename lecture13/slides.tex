@@ -104,17 +104,15 @@ and anything else that is able to communicate with memory (e.g., serial bus).
 \framesubtitle{How to make the CPU work}
 
 \begin{block}{You need an instruction set}
-You can design your (simplified) own or pick a subset of your instruction set of choice (e.g., ARM).
+You may design your own or use an existing one (like ARM: \url{http://simplemachines.it/doc/arm_inst.pdf}).
 \end{block}
 \pause
-\begin{block}{Suggestion: start simple}
-Implement a given set of registers. Then consider only the following operations:
+\begin{block}{A simplified solution: \url{http://www.eng.umd.edu/~blj/RiSC/}}
 \begin{itemize}
-\item Load from memory to chosen register
-\item Store to memory from chosen register
-\item Arithmetic operations between registers
+\item 16 bit architecture with only 8 registers and 8 instruction types;
+\item Defines its own assembly language and provides a simple assembler;
+\item For floating point operations, you may design your own external FPU unit.
 \end{itemize}
-only then you can add jumps, floating points operations, etc.
 \end{block}
 \end{frame}
 
