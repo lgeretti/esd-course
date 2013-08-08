@@ -346,6 +346,29 @@ The first one adds a search path for the headers of the dependency, while the se
 
 \end{frame}
 
+\begin{frame}
+\frametitle{Dependencies}
+\framesubtitle{Multiple libraries}
+
+\begin{block}{In complex projects, a library may be linked multiple times}
+This happens for example if multiple dependencies have themselves a dependency on a given library.
+\end{block}
+\pause
+\begin{block}{This is a problem with {\em static} libraries}
+To overcome this problem, you just need to create {\em shared} libraries by adding the \texttt{SHARED} keyword, for example:
+
+\medskip
+
+\texttt{add\_library (salut SHARED "src/salutation.c")}
+
+\medskip
+
+This will create a library file that is dynamically loaded by the linking executables.
+
+\end{block}
+
+\end{frame}
+
 \subsection{Import in an IDE}
 
 \begin{frame}
