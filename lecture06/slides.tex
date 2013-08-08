@@ -689,16 +689,49 @@ This approach improves clarity for users of your library, and shields you from b
 \framesubtitle{Template programming}
 
 \begin{block}{Templating provides methods that apply to multiple class}
-We do not explain how to write templates: it is only relevant because SystemC uses templated classes.
+This avoids writing multiple classes with the same behavior but operating on different types.
 \end{block}
 \pause
 \begin{block}{Example: templated class usage}
+\vspace{-1em}
 \begin{verbatim}
-std::vector<MyClass*> vec;
-vec.push_back(new MyClass());
+std::list<MyClass*> lst;
+lst.push_back(new MyClass());
 \end{verbatim}
+Here we create a \texttt{list} of \texttt{MyClass} objects and add one element. Since lists operate the same regardless of the contained type, a templated implementation of \texttt{list} makes sense.
+\end{block}
 
-Here adding items to a vector is the same whatever class is used, so the \texttt{std::vector} class is written with no regards to the objects it manipulates.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Extras}
+\framesubtitle{Template programming}
+
+\begin{block}{Example: a generic multiplexer}
+\vspace{-1em}
+{\scriptsize 
+\begin{verbatim}
+template<class T, unsigned S>
+class Mux {
+  private:
+    const T* values;
+  public:
+    Mux(const T* val) : values(val) { }
+    T select(const unsigned index) const { 
+      if (index >= S) throw;
+      return values[index];
+    }
+};
+\end{verbatim}
+}
+\vspace{-1em}
+\end{block}
+\pause
+\begin{block}{Advantages}
+\begin{itemize}
+\item We can create different multiplexers based on the data type of interest, and on the size of the inputs;
+\item We do not store any variable for the value of S.
+\end{itemize}
 \end{block}
 
 \end{frame}
