@@ -1031,6 +1031,33 @@ but clearly is quicker if multiple dependencies are present.
 
 \end{frame}
 
+\begin{frame}
+\frametitle{Submodules}
+\framesubtitle{Shortcuts}
+
+\begin{block}{What if we want to init {\bfseries and} update?}
+\texttt{\$ git submodule update ---init} \\
+\end{block}
+\pause
+\begin{block}{What if a submodule contains submodules itself?}
+Git does not by default init and update in a recursive way. You have to:
+
+\medskip
+\texttt{\$ git submodule update ---recursive} \\
+\medskip
+
+or even
+
+\medskip
+\texttt{\$ git submodule update ---init ---recursive} \\
+\medskip
+
+This command may be set as an alias in order to avoid checking whether any \texttt{.gitmodules} 
+has changed anywhere in all the project tree.
+\end{block}
+
+\end{frame}
+
 \subsection{Diffs and patches}
 
 \begin{frame}
