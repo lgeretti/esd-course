@@ -36,8 +36,9 @@ Teams need to exchange information and specifications in an efficient/effective 
 \begin{frame}
 \frametitle{What are we supposed to know already?}
 
+{\small
 \begin{block}{C++ programming}
-This is necessary since SystemC is a C++ library. We will not be able to rehearse the basics of C++.
+This is necessary since SystemC is a C++ library. We will quickly review object-oriented design.
 \end{block}
 \begin{block}{VHDL programming}
 This is useful for SystemC programming, because the approach is very similar.
@@ -46,9 +47,9 @@ This is useful for SystemC programming, because the approach is very similar.
 While we will briefly repeat the most useful diagrams, some previous experience helps.
 \end{block}
 \begin{block}{Use of a *nix OS}
-While the tools have been chosen specifically to be usable on a Windows machine too, the reference platform will be Linux.
+The reference platform will be Linux, with OSX working almost in the same way; Windows, while usable, is a bit less practical.
 \end{block}
-
+}
 \end{frame}
 
 \section{Topics}
@@ -227,9 +228,10 @@ Testing will be performed at the code level only.
 \framesubtitle{Summary}
 \begin{enumerate}
 \item Modeling with UML: theory and some practice
-\item Software engineering: theory only
 \item Version control with Git: theory and practice
 \item Issue tracking with BitBucket: some theory, mainly practice
+\item Build automation with CMake: mainly practice
+\item C++ basics: theory and practice
 \item Design with SystemC: theory and practice
 \item Design of a System-on-Chip (SoC) with SystemC: practice only
 \end{enumerate}
@@ -268,11 +270,11 @@ Very little: with proper buffering/amplification/matching, you can just wire the
 \begin{frame}
 \frametitle{Organization of the course}
 \framesubtitle{How to develop "our" SoC}
-\begin{block}{We split the class into teams}
+\begin{block}{We split the development into a number of (one student) teams}
 \begin{itemize}
-\item Each team has the exclusive responsibility of a component or sub-component
-\item A component may be completed or held back for another new component
-\item If necessary, responsibility of a component may be passed on to another team
+\item The student has the exclusive responsibility of a component
+\item A component may be completed or held back to focus on another new component
+\item If necessary, responsibility of a component may be passed on to another student
 \end{itemize}
 \end{block}
 \pause
@@ -289,12 +291,11 @@ focus on methodology than results.
 \frametitle{The examination}
 \framesubtitle{Summary}
 \begin{block}{Project report}
-One for each team, must be delivered at least 24 hours before the exam in electronic format by email. This is mandatory to gain
-access to the oral exam.
+Each student must deliver a report at least 24 hours before the exam in electronic format by email. This is mandatory to gain access to the oral exam.
 \end{block}
 
 \begin{block}{Oral}
-It will involve discussion of the project report and the specific contribution of the student. Additional
+It will involve discussion of the project report. Additional
 oral/written questions will complete the examination. Duration: between 10 and 20 minutes.
 \end{block}
 
@@ -307,7 +308,7 @@ oral/written questions will complete the examination. Duration: between 10 and 2
 \begin{block}{What to put into it}
 \begin{itemize}
 \item Describe the activities performed, with UML diagrams and code snippets where necessary
-\item Describe your interaction with other groups
+\item Describe your interaction with other students
 \item Create a timeline of your development on the repository
 \item Make specific mentions to issues both solved and still opened
 \end{itemize}
@@ -322,9 +323,10 @@ oral/written questions will complete the examination. Duration: between 10 and 2
 \begin{block}{Topics covered}
 \begin{itemize}
 \item UML
-\item Principles of clean code, refactoring and test driven development
 \item Git usage
+\item CMake usage
 \item Issue tracking usage
+\item Object-oriented design in C++
 \item SystemC programming
 \end{itemize}
 \end{block}
