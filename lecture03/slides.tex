@@ -219,7 +219,7 @@ Now you are informed that there are {\em untracked} files.
 
 \begin{block}{Add it to the index and check the status}
 \begin{tabular}{ll}
-\texttt{\$ git add file1} & to track and simultaneously stage the file \\
+\texttt{\$ git add file1} & to track and simultaneously stage it \\
 \texttt{\$ git status} & to check what Git says about it
 \end{tabular}
 
@@ -356,14 +356,16 @@ Tags are references used to provide names to specific commits : \\
 For example, our latest message was incorrect. Then do: \\
 \texttt{\$ git commit ---amend}
 
-\medskip
+\smallskip
 It opens an editor (\texttt{nano} on Linux) to modify the message: we 
+
 \begin{enumerate}
 \item remove the "and mydir" part of the message,
 \item save with Ctrl+X,
 \item confirm with Y or y,
 \item confirm the temporary file.
 \end{enumerate}
+
 Checking the log shows only the new commit. Precisely, the new commit is merged with the previous one. Your amendment can include modified files, new files, etc.: just add to the stage and amend.
 \end{block}
 \end{frame}
@@ -430,6 +432,25 @@ you can see all the commits involving the current \texttt{file10}, even through 
 \texttt{\$ git clean -fd}
 \end{itemize}
 Attention: these commands are destructive!
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Miscellaneous maintenance}
+\framesubtitle{Stashing modifications}
+
+\begin{block}{What if we want to "save" some modifications?}
+Problem: uncommitted modified files are carried over when checking out another commit, in order not to lose any changes. However, their presence may interfere with our activity, for example with file comparisons. What if we do not want to commit the modifications yet?
+\end{block}
+
+\pause
+\begin{block}{Stash the modifications into a stack}
+\texttt{\$ git stash} \\ 
+saves your modifications without a commit. You can do it multiple times. 
+
+To recover the top stashed modification, \\
+\texttt{\$ git stash pop}
 \end{block}
 
 \end{frame}
