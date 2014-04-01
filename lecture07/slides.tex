@@ -37,14 +37,35 @@ Differently from other HDLs, its programming model facilitates integration with 
 \framesubtitle{At a glance}
 
 \begin{enumerate}
+\item Data types
 \item Modules and hierarchy
 \item Threads and methods
 \item Events, sensitivity and notification
-\item Data types
 \item Ports, interfaces and channels
 \end{enumerate}
 
 \end{frame}
+
+\begin{frame}
+\frametitle{Elements}
+\framesubtitle{Data types}
+
+\begin{block}{Data types are implemented using C++ templates}
+Templates allow to {\em parameterize} the type, for example to set precision.
+\end{block}
+\pause
+\begin{block}{Some relevant types:}
+\begin{itemize}
+\item \texttt{sc\_int}: an integer
+\item \texttt{sc\_uint}: an unsigned integer
+\item \texttt{sc\_fixed}: a fixed point non-integer
+\item \texttt{sc\_logic}: a logical value (1,0,X,Z)
+\item \texttt{sc\_lv}: a logical vector
+\end{itemize}
+\end{block}
+
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Elements}
@@ -96,26 +117,6 @@ Calls to \texttt{wait} and \texttt{notify} on a given event handle the actual co
 
 \begin{frame}
 \frametitle{Elements}
-\framesubtitle{Data types}
-
-\begin{block}{Data types are implemented using C++ templates}
-Templates allow to {\em parameterize} the type, for example to set precision.
-\end{block}
-\pause
-\begin{block}{Some relevant types:}
-\begin{itemize}
-\item \texttt{sc\_int}: an integer
-\item \texttt{sc\_uint}: an unsigned integer
-\item \texttt{sc\_fixed}: a fixed point non-integer
-\item \texttt{sc\_logic}: a logical value (1,0,X,Z)
-\item \texttt{sc\_lv}: a logical vector
-\end{itemize}
-\end{block}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Elements}
 \framesubtitle{Ports, interfaces and channels}
 
 \begin{block}{Channels+interfaces model communication between modules}
@@ -142,16 +143,13 @@ In this way, we can match module interfaces with channel interfaces.
 \framesubtitle{Get the sources}
 
 \begin{block}{SystemC sources are under an Open Source License}
-You need to do a free registration at 
-{ \scriptsize
-\url{http://www.accellera.org/kmembership_info/individual_signup/}
-}
-
-\medskip 
-Then you can download \texttt{systemc-2.3.0.tgz} from 
+You can download \texttt{systemc-2.3.0.tgz} from 
 { \scriptsize
 \url{http://www.accellera.org/downloads/standards/systemc}
 }
+\medskip 
+
+after doing a free registration.
 \end{block}
 \begin{block}{Extract the sources}
 \texttt{\$ tar xf systemc-2.3.0.tgz} \\
@@ -166,6 +164,7 @@ will extract a \texttt{systemc-2.3.0} directory that you can move to, for exampl
 \framesubtitle{Build and install}
 
 \begin{block}{For build and local install}
+Within the extracted directory,
 \begin{enumerate}
 \item \texttt{\$ mkdir build \&\& cd build}
 \item \texttt{\$ ../configure}
