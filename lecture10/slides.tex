@@ -229,7 +229,7 @@ void TwoProcesses::wiper_thread(void) {
     wipe_right();
     wait(3,SC_SEC);
 }}
-void TwoProcesses::wiper_thread(void) {
+void TwoProcesses::blinker_thread(void) {
   while (true) {
     blink_on();
     wait(2,SC_SEC);
@@ -356,7 +356,7 @@ wait(); // static sensitivity (discussed later)
 \end{block}
 \pause
 \begin{block}{The fundamental rule:}
-To watch for an event, a process must issue a \texttt{wait} before the corresponding \texttt{notify}.
+To watch for an event, a process must issue a \texttt{wait} before the corresponding \texttt{notify} (in real time).
 \end{block}
 \end{frame}
 
@@ -387,46 +387,6 @@ SC_MODULE(ImmediateProblem) {
     cout << "C got a_event!" << endl;
   }
   sc_event a_event;
-};
-\end{verbatim}
-}
-\vspace{-1em}
-\end{block}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Events}
-\framesubtitle{How to avoid missing events or deadlocks}
-
-\begin{block}{This loops indefinitely in zero simulated time:}
-\vspace{-1em}
-{\tiny 
-\begin{verbatim}
-SC_MODULE(OrderedEvents) {
-  SC_CTOR(OrderedEvents) {
-    SC_THREAD(B_thread);
-    SC_THREAD(A_thread);
-    SC_THREAD(C_thread);
-  }
-  void A_thread() {
-    while (true) {
-      a_event.notify(SC_ZERO_TIME);
-      wait(c_event);
-    }
-  }
-  void B_thread() {
-    while (true) {
-      b_event.notify(SC_ZERO_TIME);
-      wait(a_event);
-    }
-  }
-  void C_thread() {
-    while (true) {
-      c_event.notify(SC_ZERO_TIME);
-      wait(b_event);
-    }
-  }  
-  sc_event a_event, b_event, c_event;
 };
 \end{verbatim}
 }
@@ -524,7 +484,7 @@ next_trigger(); // re-establish static sensitivity
 \begin{enumerate}
 \item The trigger applies to the next execution of the method;
 \item If no \texttt{next\_trigger} is issued, the method is never called again;
-\item Subsequent \texttt{next\_trigger} calls override the previous ones.
+\item Subsequent \texttt{next\_trigger} calls override the previous ones: the next execution can be scheduled only once.
 \end{enumerate}
 \vspace{-0.5em}
 \end{block}
@@ -587,7 +547,7 @@ Implementation scheleton:
 \framesubtitle{Avoid initialization}
 
 \begin{block}{Processes are initially placed in the runnable set}
-This may be a problem if only an event is required to run the thread/method (e.g., filling a car tank with no actual request).
+This may be a problem if an event is strictly required to run the thread/method (e.g., filling a car tank should not be done without an actual request).
 \end{block}
 \pause
 \begin{block}{Solution: \texttt{dont\_initialize();}}
