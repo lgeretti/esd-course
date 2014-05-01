@@ -7,4 +7,116 @@
 \begin{block}{Software tests simplify checking the correctness of a design}
 Without tests, we would defer such operation to the physical product.
 \end{block}
+\pause
+\begin{block}{The special need for system design}
+Systems are made of many components. If any one component is faulty, the whole system experiences issues. 
+Therefore we can have the following:
+\begin{itemize}
+\item component-level tests to help you isolate localized issues;
+\item system-level tests to check the interaction between components.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{Properties of a good test {\em suite}}
+
+\begin{enumerate}
+\item Many tests: cover as much functionality as possible;
+\pause
+\item Small tests: a single test checks only one specific state or aspect of the component;
+\pause
+\item Automation: failure/success of a test is verified programmatically.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+\framesubtitle{The need of automation for a test suite}
+
+\begin{block}{Complex systems may have lots of tests}
+If no automation is used, we tend to eventually ignore some tests with the {\em false} assumption that they still pass. When automating, all tests can be executed with very little time cost and negligible user intervention.
+\end{block}
+\pause
+\begin{block}{Properties of an automated test:}
+\begin{itemize}
+\item Inputs and expected outputs are included in the test;
+\item Simply executed, returns success or failure;
+\item Usually written for a specific testing framework (e.g., CMake); 
+\item Still may have ancillary outputs (e.g., wave files, debugging info on the standard output) that
+don't interact with the testing framework.
+\end{itemize}
+\end{block}
+\pause
+
+\end{frame}
+
+\section{TDD}
+
+\begin{frame}
+\frametitle{Test-driven development (TDD)}
+\framesubtitle{The methodology}
+
+\begin{block}{Think about your design in terms of tests}
+This methodology suggests that tests are created first, then the functionality is progressively added and refined to pass the tests.
+\end{block}
+\pause
+\begin{block}{Approach:}
+\begin{enumerate}
+\item Write at least one test that will verify your component;
+\begin{itemize}
+\item Will not compile correctly yet, since the component does not exist!
+\end{itemize}
+\pause
+\item Write an implementation for the component that would make the tests compile;
+\pause
+\item Fix the implementation until all tests pass;
+\pause
+\item Add new tests if appropriate;
+\pause
+\item Continue from 3 until satisfied with your test suite.
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Test-driven development (TDD)}
+\framesubtitle{An example: an Adder component}
+
+This is a toy example that shows the rationale behind the methodology:
+\begin{enumerate}
+\item Write one test that requires 2+2 to be equal to 4; the Adder module is referenced but not implemented;
+\pause
+\item Write an "empty" Adder module that does nothing of significance, but makes the test compile;
+\pause
+\item Write an implementation that returns 4 always: this is the simplest implementation that satisfies the test suite;
+\pause
+\item Is the test suite satisfactory? No, because we should test for multiple inputs. So we add a new test for 7+1 equal to 8;
+\pause
+\item Now we are compelled to write a more generic (hence more usable) implementation, which is probably the correct one.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Test-driven development (TDD)}
+\framesubtitle{Summarizing}
+
+\begin{block}{What's the point of the methodology?}
+Since the implementation is written for the tests, it's more difficult that some behavior of the component is not tested.
+\end{block}
+\pause
+\begin{block}{The key requirement:}
+You must provide sufficient tests (i.e., input/output sets) to represent the actual states in which the component may be. In other terms, you must reason in terms of how you expect the component to react to certain inputs.
+\end{block}
+\pause
+\begin{block}{When are my tests sufficient?}
+Sometimes you cannot simply know for sure. In other cases you can identify a limited set of component states to test.
+\begin{itemize}
+\item Covering all {\em border cases} is a good approach. This usually translates into providing {\em extremal} values for inputs.
+\end{itemize}
+\end{block}
 \end{frame}
