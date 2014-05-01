@@ -265,26 +265,6 @@ Exports are ports that are internally bound to a channel.
 
 \begin{frame}[fragile]
 \frametitle{Exports}
-\framesubtitle{What are exports?}
-\begin{block}{Syntax: \texttt{sc\_export<interface> name;}}
-Exports are ports that are bound to a channel {\em internal} to the module.
-\begin{itemize}
-\item They do not need to expose the channel details.
-\end{itemize}
-\end{block}
-\pause
-\begin{block}{Differences compared to ports}
-\begin{enumerate}
-\item Binding is done within the declaring module;
-\item You cannot have export arrays;
-\item You cannot use an export on a static sensitivity list.
-\end{enumerate}
-\end{block}
-
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Exports}
 \framesubtitle{Usage example}
 {\tiny 
 \begin{verbatim}
