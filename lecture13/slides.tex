@@ -23,9 +23,11 @@ Therefore we can have the following:
 \framesubtitle{Properties of a good test {\em suite}}
 
 \begin{enumerate}
-\item Many tests: cover as much functionality as possible;
+\item Coverage: tests address as much functionality as possible;
 \pause
-\item Small tests: a single test checks only one specific state or aspect of the component;
+\item Atomicity: a single test checks only one specific state or aspect of the component;
+\pause
+\item Reproducibility: a single test has to return the same result for multiple runs;
 \pause
 \item Automation: failure/success of a test is verified programmatically.
 \end{enumerate}
@@ -118,5 +120,89 @@ Sometimes you cannot simply know for sure. In other cases you can identify a lim
 \begin{itemize}
 \item Covering all {\em border cases} is a good approach. This usually translates into providing {\em extremal} values for inputs.
 \end{itemize}
+\end{block}
+\end{frame}
+
+\section{Testing in SystemC}
+
+\begin{frame}
+\frametitle{Testing in SystemC}
+\framesubtitle{Testbenching}
+
+\begin{block}{A testbench is an environment for testing}
+It is a module that includes the module under test (MUT), along with a {\em stimulus} and a {\em checker} thread.
+\end{block}
+\pause
+\begin{block}{How do we test in a testbench?}
+\begin{enumerate}
+\item Create a stimulus thread that provides inputs for the MUT;
+\pause
+\item Create a checker thread that collects outputs from the MUT, verifies their values and saves the success on a variable;
+\pause
+\item Simulate the testbench module;
+\pause
+\item Read the success variable to get the result of the test.
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing in SystemC}
+\framesubtitle{Stimulus}
+
+\begin{block}{The stimulus writes the inputs}
+We usually employ a SystemC thread, since we need to use {\em wait} conditions.
+\end{block}
+\pause
+\begin{block}{What if the combination of inputs is too large to be fully tested?}
+Test a subset. If outputs can be calculated from inputs, then automatically generate the input/output pairs. 
+\begin{itemize}
+\item To avoid bias in your choice of inputs, use a {\em pseudorandom} input generator, like for example a linear feedback shift register (LFSR);
+\item Remember that tests must be {\em reproducible}.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing in SystemC}
+\framesubtitle{Checker}
+
+\begin{block}{The checker reads the outputs}
+We usually employ a SystemC method, since we react to MUT outputs with no waits.
+\end{block}
+\pause
+\begin{block}{What if we need to check delays, or in general time dependencies?}
+We can always get the current time with \texttt{sc\_time\_stamp()} and store values along with their time for later check.
+\begin{itemize}
+\item It may be useful to have two processes: one for collection of timed output values ("collector"), and another for final checking;
+\item Remember that one test should have a relatively small concern: you should not test multiple time dependencies on the same test.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing in SystemC}
+\framesubtitle{Testbench reusal}
+
+\begin{block}{Repeated code is common when testing}
+\begin{itemize}
+\item For stimuli, you may have to provide the same input to different modules;
+\item For checkers, you may have to verify the same behavior for different input sets.
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Reduce repetition: create stimulus/checker modules}
+Now the testbench is simply a container for such modules. 
+\begin{enumerate}
+\item Introduce an instance of the stimulus and checker modules;
+\pause
+\item Connect them to the MUT;
+\pause
+\item Route the checker output to the testbench output;
+\pause
+\item Simulate and verify the success as before.
+\end{enumerate}
 \end{block}
 \end{frame}
